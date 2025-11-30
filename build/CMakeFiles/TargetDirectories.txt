@@ -1,0 +1,3 @@
+/home/otto/doc/Assignments/Second Level/OOP/ELMENUS/build/CMakeFiles/elmenus.dir
+/home/otto/doc/Assignments/Second Level/OOP/ELMENUS/build/CMakeFiles/edit_cache.dir
+/home/otto/doc/Assignments/Second Level/OOP/ELMENUS/build/CMakeFiles/rebuild_cache.dir
