@@ -1,4 +1,6 @@
-
+//
+//
+// Author: Haytham Ashraf
 
 #ifndef _DLIVERY_DRIVER_H_
 #define _DLIVERY_DRIVER_H_
@@ -26,11 +28,11 @@ public:
 
     void completeDlivery(double orderValue);
 
-    // postfix    
+    // postfix
     DliveryDriver operator++();
 
     // prefix
-    DliveryDriver& operator++();
+    DliveryDriver& operator++(int);
 
     // getters
     std::string getVehicalType();

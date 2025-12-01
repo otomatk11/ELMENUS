@@ -1,33 +1,54 @@
+//
+//
+// Author: Mahmoud Shalaby
+
+#include <iostream>
+#include "Status.h"
 #include "Customer.h"
 
-Customer::Customer()
+using namespace std;
+
+Customer::Customer() : User()
 {
-    deliveryAddress= " ";
-    loyaltyPoints= 0;
+    deliveryAddress = "";
+    loyaltyPoints = 0;
+
+    userType = UserType::CUSTOMER;
 }
-Customer::Customer(string deliveryA, int loyaltyP)
+
+Customer::Customer(string deliveryA, int loyaltyP) : User()
 {
     setDeliveryAddress(deliveryA);
     setLoyaltyPoints(loyaltyP);
+
+    userType = UserType::CUSTOMER;
 }
+
 void Customer::displayinfo()
 {
-    User::displayinfo();
-   cout<< deliveryAddress<< endl;
-   cout << loyaltyPoints<< endl;
+    User::displayInfo();
+
+    cout<< deliveryAddress<< endl;
+    cout << loyaltyPoints<< endl;
 }
+
 double Customer::calculateEarnings()
 {
-    return loyaltyPoints* 0.5;
+    const double TAX = 0.5;
+
+    return loyaltyPoints * TAX;
 }
+
 void Customer::setDeliveryAddress(string a)
 {
-    deliveryAddress= a;
+    deliveryAddress = a;
 }
+
 void Customer::setLoyaltyPoints(int p)
 {
-    loyaltyPoints= p;
+    loyaltyPoints = p;
 }
+
 void Customer::operator+=(int o)
 {
     loyaltyPoints += o;

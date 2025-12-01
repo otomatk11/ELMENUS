@@ -1,28 +1,37 @@
+
+
+//
+//
+// Author: Mahmoud Shalaby
+
+#ifndef _FOOD_ITEM_H_
+#define _FOOD_ITEM_H_
+
+#include <string>
+
 class FoodItem
 {
-  private:
-    string itemname;
-    double price;
-    int quantity;
-  public:
+private:
+
+    std::string itemName_;
+    double price_;
+    int quantity_;
+
+public:
+
     FoodItem();
+    FoodItem(std::string name, double p, int q);
 
-    FoodItem(string name, double p, int q);
+    void setItemName(std::string name);
+    void setPrice(double p);
+    void setQuantity(int q);
 
-    void setname(string name);
+    std::string getItemName() const;
+    double getPrice() const;
+    int getQuantity() const;
 
-    void setprice(double p);
-
-    void setquantity(int q);
-    
-    string getItemName();
-    
-    double getprice();
-
-    int getquantity();  
-
-    double calculateItemTotal()
-    
+    double calculateItemTotal() const;
     void displayItem();
-        
 };
+
+#endif // _FOOD_ITEM_H_

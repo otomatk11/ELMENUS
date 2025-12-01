@@ -1,5 +1,9 @@
+//
+//
+// Author: Haytham Ashraf
 
-
+#include <iostream>
+#include "Status.h"
 #include "DliveryDriver.h"
 
 using namespace std;
@@ -10,6 +14,8 @@ DliveryDriver::DliveryDriver()
     vehicalType_ = "";
     completeDliveries_ = 0;
     totalEarnings_ = 0.0;
+
+    userType = UserType::DRIVER;
 }
 
 DliveryDriver::DliveryDriver(string vehicalType, int completeDliveries, double totalEarnings)
@@ -17,13 +23,17 @@ DliveryDriver::DliveryDriver(string vehicalType, int completeDliveries, double t
     vehicalType_ = vehicalType;
     completeDliveries_ = completeDliveries;
     totalEarnings_ = totalEarnings;
+
+    userType = UserType::DRIVER;
 }
 
-DliveryDriver::DliveryDriver(const DliveryDriver& dd)
+DliveryDriver::DliveryDriver(const DliveryDriver& dd) : User(dd)
 {
     vehicalType_ = dd.vehicalType_;
     completeDliveries_ = dd.completeDliveries_;
     totalEarnings_ = dd.totalEarnings_;
+
+    userType = UserType::DRIVER;
 }
 
 void DliveryDriver::displayInfo() 
@@ -56,7 +66,7 @@ DliveryDriver DliveryDriver::operator++()
 }
 
 // prefix
-DliveryDriver& DliveryDriver::operator++()
+DliveryDriver& DliveryDriver::operator++(int)
 {
     ++completeDliveries_;
     return *this;
