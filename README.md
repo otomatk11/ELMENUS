@@ -21,5 +21,4 @@ Use cmake to generate the build file, then use your own building system, i.e **M
 
  ## Notes
 1. No **AI tools** were allowed what so ever!
-<br>
 2. This project was uploaded and maintained on github.
