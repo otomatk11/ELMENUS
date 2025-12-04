@@ -1,6 +1,4 @@
-//
-//
-// Author: Haytham Ashraf
+
 
 #ifndef _DLIVERY_DRIVER_H_
 #define _DLIVERY_DRIVER_H_
@@ -20,7 +18,15 @@ public:
 
     // ctors
     DliveryDriver();
-    DliveryDriver(std::string vehicalType, int completeDliveries, double totalEarnings);
+    DliveryDriver(
+		std::string id,
+		std::string n,
+		std::string p,
+		std::string vehicalType,
+		int completeDliveries,
+		double totalEarnings
+	);
+	
     DliveryDriver(const DliveryDriver& dd);
 
     void displayInfo() override;

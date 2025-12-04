@@ -1,9 +1,7 @@
-//
-//
-// Author: Haytham Ashraf
+
 
 #include <iostream>
-#include <iomanip>
+// #include <iomanip>
 #include <cstring>
 #include "Status.h"
 #include "Order.h"
@@ -94,7 +92,7 @@ Order::~Order()
 void Order::addItem(const FoodItem& item)
 {
     if(capacity_ == itemCount_)
-        Resize(DEF_ITEMS_COUNT);
+        resize_(DEF_ITEMS_COUNT);
 
     // add item to items_ in a stack order
     items_[capacity_].setItemName(item.getItemName());
@@ -132,20 +130,18 @@ double Order::calculateTotal() const
 // display complete orders details
 void Order::displayOrder()
 {
-    const int WIDTH = 10;
-
-    cout << "ID: " << setw(WIDTH) << orderId_ << endl;
+    cout << "ID: " << orderId_ << endl;
 
     // Custormer* customer_;
     // DilveryDriver* driver_;
     cout << (*this);
 
     // how many items are inside item_
-    cout << "Capacity: " << setw(WIDTH) << capacity_ << endl;
+    cout << "Capacity: " << capacity_ << endl;
 
     // order status
-    cout << "Order Status: " << setw(WIDTH) << OrderStatusName(status_) << endl;
-    cout << "Total Orders: " << setw(WIDTH) << Order::totalOrders_ << endl;
+    cout << "Order Status: " << OrderStatusName(status_) << endl;
+    cout << "Total Orders: " << Order::totalOrders_ << endl;
 }
 
 int Order::getTotalOrders()
@@ -177,7 +173,7 @@ int Order::getItemCount()
 void Order::operator+=(const FoodItem& item)
 {
     if(capacity_ == itemCount_)
-        Resize(DEF_ITEMS_COUNT);
+        resize_(DEF_ITEMS_COUNT);
 
     items_[capacity_].setItemName(item.getItemName());
     items_[capacity_].setPrice(item.getPrice());
@@ -189,7 +185,7 @@ void Order::operator+=(const FoodItem& item)
 Order& Order::operator+ (const Order& order)
 {
     if(capacity_ + order.capacity_ >= itemCount_)
-        Resize(capacity_ + order.capacity_ - itemCount_);
+        resize_(capacity_ + order.capacity_ - itemCount_);
 
     int index = 0;
 
@@ -207,16 +203,14 @@ Order& Order::operator+ (const Order& order)
 // print order details, "What Details?"
 ostream& operator<<(ostream& os, const Order& order)
 {
-    const int WIDTH = 10;
-
-    os << "ItemCount: " << setw(WIDTH) << order.itemCount_ << endl;
+    os << "ItemCount: " << order.itemCount_ << endl;
     os << "Items: \n" << endl; 
     
     for(int i = 0; i < order.itemCount_; i++) {
         os << "\t" << "Item[" << i << "]: " << endl;
-        os << "\t\t" << "Name: " << setw(WIDTH) << order.items_[i].getItemName() << endl;
-        os << "\t\t" << "Price: " << setw(WIDTH) << order.items_[i].getPrice() << endl;
-        os << "\t\t" << "Quantity: " << setw(WIDTH) << order.items_[i].getQuantity() << endl;
+        os << "\t\t" << "Name: " << order.items_[i].getItemName() << endl;
+        os << "\t\t" << "Price: " << order.items_[i].getPrice() << endl;
+        os << "\t\t" << "Quantity: " << order.items_[i].getQuantity() << endl;
     }
 
     return os;
@@ -234,7 +228,7 @@ FoodItem& Order::operator[](int index)
     return items_[index];
 }
 
-void Order::Resize(int moreSize) {
+void Order::resize_(int moreSize) {
 
     // resize, by DEF_ITEMS_COUNT
     FoodItem* temp = new FoodItem[moreSize + itemCount_];

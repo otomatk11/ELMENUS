@@ -1,6 +1,4 @@
-//
-//
-// Author: Haytham Ashraf
+
 
 #ifndef _ORDER_H_
 #define _ORDER_H_
@@ -32,7 +30,6 @@ private:
     // order status
     OrderStatus status_;
     static int totalOrders_;
-
 public:
 
     Order();
@@ -78,7 +75,7 @@ public:
 private:
 
     // resize current items_, and copy old content
-    void Resize(int moreSize);
+    void resize_(int moreSize);
 };
 
 

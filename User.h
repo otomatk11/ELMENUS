@@ -1,6 +1,4 @@
-//
-//
-// Author: Mahmoud Shalaby
+
 
 #ifndef _USER_H_
 #define _USER_H_
@@ -13,21 +11,21 @@ class User
 {
 protected:
 
-    std::string userid;
-    std::string name;
-    std::string phonenumber;
+    std::string userid_;
+    std::string name_;
+    std::string phonenumber_;
 
-    UserType userType;
+    UserType userType_;
 
     // total users created by constructors
-    static int totalUsers;
+    static int totalUsers_;
 public:
 
     User();
     User(std::string id, std::string n, std::string p);
     virtual ~User();
 
-    virtual void displayInfo();
+    virtual void displayInfo()=0;
     virtual double calculateEarnings() = 0;
 
     static int getTotalUsers();

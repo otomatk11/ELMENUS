@@ -1,6 +1,4 @@
-//
-//
-// Author: Mahmoud Shalaby
+
 
 #ifndef Customer_h
 #define Customer_h
@@ -12,14 +10,20 @@ class Customer : public User
 {
 private:
 
-    std::string deliveryAddress;
-    int loyaltyPoints;
+    std::string deliveryAddress_;
+    int loyaltyPoints_;
 public:
 
     Customer();
-    Customer(std::string deliveryA, int loyaltyP);
+    Customer(
+		std::string id,
+		std::string n,
+		std::string p,
+		std::string deliveryA,
+		int loyaltyP
+	);
 
-    void displayinfo();
+    void displayInfo();
     double calculateEarnings();
     void setDeliveryAddress(std::string a);
     void setLoyaltyPoints(int p);

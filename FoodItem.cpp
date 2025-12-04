@@ -1,6 +1,4 @@
-//
-//
-// Author: Mahmoud Shalaby
+
 
 #include <iostream>
 #include "FoodItem.h"

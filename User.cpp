@@ -1,56 +1,51 @@
-//
-//
-// Author: Mahmoud Shalaby
+
 
 #include <iostream>
 #include "User.h"
 
 using namespace std;
 
-int User::totalUsers=0;
+int User::totalUsers_ = 0;
 
 User::User()
 {
-    userid = "";
-    name = "";
-    phonenumber = "";
+    userid_ = "";
+    name_ = "";
+    phonenumber_ = "";
+	
+	totalUsers_++;
 }
 
 User::User(string id, string n, string p)
 {
-    userid = id;
-    name = n;
-    phonenumber = p;
+    userid_ = id;
+    name_ = n;
+    phonenumber_ = p;
+	
+	totalUsers_++;
 }
 
 User::~User()
-{ 
-}
-
-void User::displayInfo()
 {
-    cout << userid << endl;
-    cout << name << endl;
-    cout << phonenumber << endl;
-    cout << UserTypeName(userType) << endl;
+	totalUsers_--;
 }
 
 int User::getTotalUsers()
 {
-    return totalUsers;
+    return totalUsers_;
 }
 
 string User::getUserID()
 {
-    return userid;
+    return userid_;
 }
 
 string User::getName()
 {
-    return name;
+    return name_;
 }
 
 string User::getPhoneNumber()
 {
-    return phonenumber;
+    return phonenumber_;
 }

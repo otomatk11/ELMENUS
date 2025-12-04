@@ -1,6 +1,4 @@
-//
-//
-// Author: Haytham Ashraf
+
 
 #include <iostream>
 #include "Status.h"
@@ -15,16 +13,22 @@ DliveryDriver::DliveryDriver()
     completeDliveries_ = 0;
     totalEarnings_ = 0.0;
 
-    userType = UserType::DRIVER;
+    userType_ = UserType::DRIVER;
 }
 
-DliveryDriver::DliveryDriver(string vehicalType, int completeDliveries, double totalEarnings)
-{
+DliveryDriver::DliveryDriver(
+	std::string id,
+	std::string n,
+	std::string p,
+	std::string vehicalType,
+	int completeDliveries,
+	double totalEarnings
+) {
     vehicalType_ = vehicalType;
     completeDliveries_ = completeDliveries;
     totalEarnings_ = totalEarnings;
 
-    userType = UserType::DRIVER;
+    userType_ = UserType::DRIVER;
 }
 
 DliveryDriver::DliveryDriver(const DliveryDriver& dd) : User(dd)
@@ -33,12 +37,16 @@ DliveryDriver::DliveryDriver(const DliveryDriver& dd) : User(dd)
     completeDliveries_ = dd.completeDliveries_;
     totalEarnings_ = dd.totalEarnings_;
 
-    userType = UserType::DRIVER;
+    userType_ = UserType::DRIVER;
 }
 
 void DliveryDriver::displayInfo() 
 {
-    User::displayInfo();
+    // User::displayInfo();
+
+	cout << "UserID: " << userid_ << endl;
+	cout << "Name: " << name_ << endl;
+	cout << "Phone Number: " << phonenumber_ << endl;
 
     cout << "Vehcial Type: " << vehicalType_ << endl;
     cout << "CompleteDliveries: " << completeDliveries_ << endl;

@@ -1,9 +1,5 @@
 
 
-//
-//
-// Author: Mahmoud Shalaby
-
 #ifndef _FOOD_ITEM_H_
 #define _FOOD_ITEM_H_
 
@@ -16,7 +12,6 @@ private:
     std::string itemName_;
     double price_;
     int quantity_;
-
 public:
 
     FoodItem();
