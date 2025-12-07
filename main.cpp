@@ -116,8 +116,13 @@ int main() {
 				prompt("Complete Deliveries: ", DataType::INT, &completeDeliveries);
 				prompt("Total Earning: ", DataType::DOUBLE, &totalEarning);
 				
-				users[user_i] = new DliveryDriver(id, n, p,
-					vehicalType, completeDeliveries, totalEarning
+				users[user_i] = new DliveryDriver(
+                    id,
+                    n,
+                    p,
+					vehicalType,
+                    completeDeliveries,
+                    totalEarning
 				);
 				
 				user_i++;
@@ -309,12 +314,8 @@ void prompt(const string& str, DataType dt, void* out) {
 
 		cout << str;
 
-		if(dt == DataType::STR) {
-			cin.ignore();
-			getline(cin, input);
-		} else {
-			cin >> input;
-		}
+        cin.ignore();
+        getline(cin, input);
 
         // now we try to find the expected datatype of input
         // assume by default it is an integer
