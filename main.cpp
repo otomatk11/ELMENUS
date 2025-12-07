@@ -145,25 +145,80 @@ int main() {
 			} break;
 			
 			case MenuItem::ADD:       // adds items to order
-			{} break;
+			{
+                //FoodItem fooditem;
+                FoodItem* items;
+                int numAddItems;
+                int addOrderID;
+                
+                cout <<"How many items do you wish to add?"<< endl;
+                cin>> numAddItems;
+                
+                cout << "Which order do you wish to add the item into?"<< endl;
+                cin >> addOrderID;
+                
+                string name[numAddItems];
+                int quantity[numAddItems];
+                double price[numAddItems];
+                items= new FoodItem[numAddItems];
+                
+                for(int i; i< numAddItems; i++)
+                {
+                    cout<< "Enter name,price and quantity each item respectfully: "<< endl;
+                    cin>> name[i];
+                    cin>> price[i];
+                    cin>> quantity[i];
+                    items[i]->FoodItem(name[i], price[i], quantity[i]);
+                    order[addOrderID]+= items[i];
+                }
+
+            } break;
 			
 			case MenuItem::ASSIGN:    // assign driver to order
-			{} break;
+			{
+                
+                cout<< "Enter the driver's ID and the order ID: "<< endl;
+                
+            } break;
 			
 			case MenuItem::UPDATE:    // update order status
 			{} break;
 			
 			case MenuItem::DIS_ORD:   // display order status
-			{} break;
+			{
+                int idOfOrder;
+                cout<< "Which order do you wisth to display? "<< endl;
+                cin>> idOfOrder;
+                Order[idOfOrder].displayOrder();
+            } break;
 			
 			case MenuItem::DIS_CUS: // display custorm information
-			{} break;
+			{
+                int cusID;
+                cout << "Enter customer ID: "<< endl;
+                cin>> cusID;
+                User[cusIID].displayInfo();
+            } break;
 			
 			case MenuItem::DIS_DRI: // display dirver information
-			{} break;
+			{
+                int drivID;
+                cout << "Enter driver ID: "<< endl;
+                User[drivID].displayInfo();
+            } break;
 			
 			case MenuItem::CMP:     // compare two orders by total
-			{} break;
+			{
+                int orderID1, orderID2;
+                cout <<"Enter orders' ID to compare: "<< endl;
+                cin>> orderID1;
+                cin>> orderID2;
+                if(Order[orderID1] > Order[orderID2]){
+                    cout<< "The "<< orderID1<< " is more expensive than "<< orderID2<< " order."<< endl;
+                }
+                else
+                    cout<< "The "<< orderID2<< " is more expensive than "<< orderID1<< " order."<< endl;
+            } break;
 			
 			case MenuItem::DIS_SYS: // display system statistics
 			{} break;
