@@ -1,6 +1,5 @@
-##
-##
-## Author: Haytham Ashraf
+
+
 
 cmake_minimum_required(VERSION 4.1)
 project(ELMenus VERSION 1.0 LANGUAGES CXX)

@@ -32,6 +32,10 @@ public:
     std::string getUserID();
     std::string getName();
     std::string getPhoneNumber();
+
+    // EXTRA
+    UserType getType();
+    // bool checkType(UserType type);
 };
 
 #endif // _USER_H_

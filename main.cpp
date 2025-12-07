@@ -2,23 +2,13 @@
 
 
 #include <iostream>
+#include <fstream>
 #include <iomanip>
+#include "Status.h"
 #include "User.h"
 #include "Order.h"
-// #include "Prompt.h"
 
 using namespace std;
-
-// constants
-const int MENU_WIDTH = 40;
-
-// title of the application
-const string TITLE = "ELMENUS MANAGEMENT SYSTEM v1.0";
-
-User* users[50];
-Order* orders[50];
-int user_i = 0; // users index
-int order_i = 0; // orders index
 
 enum MenuItem {
 	// User Management
@@ -58,13 +48,27 @@ enum class DataType {
     DOUBLE
 };
 
+// width of menu 
+const int MENU_WIDTH = 40;
 
+// title of the application
+const string TITLE = "ELMENUS MANAGEMENT SYSTEM v1.0";
+
+// name of file to save orders
+const string ORDERS_FILE = "orders.txt";
+
+// data for program
+User*  users[50];  int user_i = 0;
+Order* orders[50]; int order_i = 0;
+
+
+bool   displayUsers(UserType filter);
 void   breakLine(const string& title);
 void   printHeader(int rows, const string& title, bool bottom_line);
 void   printMenu();
 string dataTypeName(DataType dt);
 void   prompt(const string& str, DataType dt, void* out);
-
+int    prompt_constraints(const string& str, int size, const string* list);
 
 
 int main() {
@@ -120,7 +124,7 @@ int main() {
                     id,
                     n,
                     p,
-					vehicalType,
+                    vehicalType,
                     completeDeliveries,
                     totalEarning
 				);
@@ -130,104 +134,157 @@ int main() {
 			
 			case MenuItem::NEW_ORDER: // create a new order
 			{
-				int orderId;
-				Customer* customer;
-				
+				int orderId;	
 				prompt("Order ID: ", DataType::INT, &orderId);
 				
-				cout << "Choose Customer:\n";
-				for(int i = 0; i < user_i; i++)
-					cout << setw(3) << i << ". " << users[i]->getName() << endl;
-				
-				int cus_index;
-				prompt("Choose Customer: ", DataType::INT, &cus_index);
-				
+                if(!displayUsers(UserType::Customer)) {
+                    cout << " . No Customers\n";
+                    continue;
+                }
+                
+                int cus_index;
+                prompt("Choose Customer: ", DataType::INT, &cus_index);
+
+                // TBD ... create new order
 			} break;
 			
 			case MenuItem::ADD:       // adds items to order
 			{
-                //FoodItem fooditem;
-                FoodItem* items;
                 int numAddItems;
                 int addOrderID;
                 
-                cout <<"How many items do you wish to add?"<< endl;
-                cin>> numAddItems;
+                prompt("OrderID: ", DataType::INT, &addOrderID);       
+                prompt("Number of itmes: ", DataType::INT, &numAddItems); 
+
+                FoodItem* items = new FoodItem[numAddItems];
                 
-                cout << "Which order do you wish to add the item into?"<< endl;
-                cin >> addOrderID;
-                
-                string name[numAddItems];
-                int quantity[numAddItems];
-                double price[numAddItems];
-                items= new FoodItem[numAddItems];
-                
-                for(int i; i< numAddItems; i++)
+                for(int i = 0; i< numAddItems; i++)
                 {
-                    cout<< "Enter name,price and quantity each item respectfully: "<< endl;
-                    cin>> name[i];
-                    cin>> price[i];
-                    cin>> quantity[i];
-                    items[i]->FoodItem(name[i], price[i], quantity[i]);
-                    order[addOrderID]+= items[i];
+                    // ...
+                    cout << "Item " << i+1 << "\n";
+
+                    string name;
+                    int quantity;
+                    double price;
+
+                    // request
+                    prompt("Name: ", DataType::STR, &name);
+                    prompt("Price: ", DataType::DOUBLE, &price);
+                    prompt("Quantity: ", DataType::INT, &quantity);
+
+                    // fill in
+                    items[i].setItemName(name);
+                    items[i].setPrice(price);
+                    items[i].setQuantity(quantity);
                 }
+
+                // TBD ... Add to order
 
             } break;
 			
 			case MenuItem::ASSIGN:    // assign driver to order
 			{
+                cout << "Enter the driver's ID and the order ID: " << endl;
                 
-                cout<< "Enter the driver's ID and the order ID: "<< endl;
-                
+                // TBD ...
+
             } break;
 			
 			case MenuItem::UPDATE:    // update order status
-			{} break;
+			{
+                int orderID;
+
+                prompt("OrderID: ", DataType::INT, &orderID);
+
+                // ask for new status
+
+                string list[5];
+                list[0] = orderStatusName(OrderStatus::PENDING);
+                list[1] = orderStatusName(OrderStatus::PREPARING);
+                list[2] = orderStatusName(OrderStatus::OUT_OF_DELIVERY);
+                list[3] = orderStatusName(OrderStatus::DELIVERED);
+                list[4] = orderStatusName(OrderStatus::CANCELLED);
+
+                int pickIndex = 
+                    prompt_constraints("Choose a status: ", 5, list);
+
+                // TBD ... update status
+
+            } break;
 			
 			case MenuItem::DIS_ORD:   // display order status
 			{
                 int idOfOrder;
-                cout<< "Which order do you wisth to display? "<< endl;
-                cin>> idOfOrder;
-                Order[idOfOrder].displayOrder();
+
+                prompt("OrderID: ", DataType::INT, &idOfOrder);
+
+                // TBD ... index range checking
+
+                orders[idOfOrder]->displayOrder();
             } break;
 			
 			case MenuItem::DIS_CUS: // display custorm information
 			{
                 int cusID;
-                cout << "Enter customer ID: "<< endl;
-                cin>> cusID;
-                User[cusIID].displayInfo();
+                prompt("CustomerID: ", DataType::INT, &cusID);
+
+                // TBD ... index range checking
+
+                // cout << "Enter customer ID: "<< endl;
+                // cin>> cusID;
+                users[cusID]->displayInfo();
             } break;
 			
 			case MenuItem::DIS_DRI: // display dirver information
 			{
                 int drivID;
-                cout << "Enter driver ID: "<< endl;
-                User[drivID].displayInfo();
+                prompt("DriverID: ", DataType::INT, &drivID);
+
+                // TBD ... index range checking
+
+                // cout << "Enter driver ID: "<< endl;
+                users[drivID]->displayInfo();
             } break;
 			
 			case MenuItem::CMP:     // compare two orders by total
 			{
                 int orderID1, orderID2;
-                cout <<"Enter orders' ID to compare: "<< endl;
-                cin>> orderID1;
-                cin>> orderID2;
-                if(Order[orderID1] > Order[orderID2]){
-                    cout<< "The "<< orderID1<< " is more expensive than "<< orderID2<< " order."<< endl;
-                }
-                else
-                    cout<< "The "<< orderID2<< " is more expensive than "<< orderID1<< " order."<< endl;
+                prompt("Order 1\'s ID: ", DataType::INT, &orderID1);
+                prompt("Order 2\'s ID: ", DataType::INT, &orderID2);
+
+                // TBD ...
+
             } break;
 			
 			case MenuItem::DIS_SYS: // display system statistics
 			{} break;
 			
 			case MenuItem::SAVE_ORDERS:  // save completed orders to a file
-			{} break;
+			{
+                if(order_i == 0) {
+                    cout << " . No orders to write\n";
+                    continue;
+                }
+
+                fstream file(ORDERS_FILE, fstream::out);
+                if(!file.is_open()) {
+                    cout << "error, couldn\'t open file \'" << ORDERS_FILE << "\' for writing\n";
+                    continue;
+                }
+
+                int i;
+                for(i = 0; i < order_i; i++) {
+                    file << orders[i];
+                }
+
+                cout << "written " << i+1 << " orders to " << ORDERS_FILE << "\n";
+                file.close();
+            } break;
 			
 			case MenuItem::SAVE_DRIVERS: // save driver statistics to a file
-			{} break;
+			{
+
+            } break;
 			
 			case MenuItem::SAVE_ORDERS_BIN: // save orders to a binary file
 			{} break;
@@ -258,6 +315,26 @@ int main() {
 		delete orders[i];
 
     return 0;
+}
+
+bool displayUsers(UserType filter) {
+
+    int counter = 0;
+
+    if(user_i == 0)
+        return false;
+
+    for(int i = 0; i < user_i; i++) {
+        if(users[i]->getType() == filter) {
+
+            cout << setw(3) << i << ". "
+                 << users[i]->getName() << endl;
+
+            counter++;
+        }
+    }
+
+    return counter > 0;
 }
 
 void breakLine(const string& title) {
@@ -363,14 +440,19 @@ string dataTypeName(DataType dt) {
 
 void prompt(const string& str, DataType dt, void* out) {
 
-	string input;
+	string input = "";
 	
     while(true) {
 
 		cout << str;
 
-        cin.ignore();
+        if(dt == DataType::STR)
+            cin.ignore();
+
         getline(cin, input);
+
+        if(input.length() == 0)
+            continue;
 
         // now we try to find the expected datatype of input
         // assume by default it is an integer
@@ -438,4 +520,18 @@ void prompt(const string& str, DataType dt, void* out) {
 
         cout << "prompt: expected \"" << dataTypeName(dt )<< "\"\n";
     }
+}
+
+int prompt_constraints(const string& str, int size, const string* list) {
+
+    // print list
+    for(int i = 0; i < size; i++) {
+        cout << setw(3) << i << ". " 
+             << list[i] << endl;
+    }
+
+    int index;
+    prompt(str, DataType::INT, &index);
+
+    return index;
 }

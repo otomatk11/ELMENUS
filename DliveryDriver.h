@@ -18,6 +18,7 @@ public:
 
     // ctors
     DliveryDriver();
+    DliveryDriver(const DliveryDriver& dd);
     DliveryDriver(
 		std::string id,
 		std::string n,
@@ -26,8 +27,6 @@ public:
 		int completeDliveries,
 		double totalEarnings
 	);
-	
-    DliveryDriver(const DliveryDriver& dd);
 
     void displayInfo() override;
     double calculateEarnings() override;

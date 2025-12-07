@@ -27,7 +27,7 @@ Order::Order()
     items_ = new FoodItem[DEF_ITEMS_COUNT];
 
     // status
-    status_ = OrderStatus::NONE;
+    status_ = OrderStatus::PENDING;
 }
 
 Order::Order(int orderId, Customer* cus)
@@ -46,7 +46,7 @@ Order::Order(int orderId, Customer* cus)
     items_ = new FoodItem[DEF_ITEMS_COUNT];
 
     // status
-    status_ = OrderStatus::NONE;
+    status_ = OrderStatus::PENDING;
 }
 
 Order::Order(const Order& order)
@@ -140,7 +140,7 @@ void Order::displayOrder()
     cout << "Capacity: " << capacity_ << endl;
 
     // order status
-    cout << "Order Status: " << OrderStatusName(status_) << endl;
+    cout << "Order Status: " << orderStatusName(status_) << endl;
     cout << "Total Orders: " << Order::totalOrders_ << endl;
 }
 

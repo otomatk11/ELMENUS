@@ -20,7 +20,7 @@ Customer::Customer(
     setDeliveryAddress(deliveryA);
     setLoyaltyPoints(loyaltyP);
 
-    userType_ = UserType::CUSTOMER;
+    userType_ = UserType::Customer;
 }
 
 void Customer::displayInfo()

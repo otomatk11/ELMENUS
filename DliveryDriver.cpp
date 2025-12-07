@@ -13,7 +13,7 @@ DliveryDriver::DliveryDriver()
     completeDliveries_ = 0;
     totalEarnings_ = 0.0;
 
-    userType_ = UserType::DRIVER;
+    userType_ = UserType::Driver;
 }
 
 DliveryDriver::DliveryDriver(
@@ -28,7 +28,7 @@ DliveryDriver::DliveryDriver(
     completeDliveries_ = completeDliveries;
     totalEarnings_ = totalEarnings;
 
-    userType_ = UserType::DRIVER;
+    userType_ = UserType::Driver;
 }
 
 DliveryDriver::DliveryDriver(const DliveryDriver& dd) : User(dd)
@@ -37,7 +37,7 @@ DliveryDriver::DliveryDriver(const DliveryDriver& dd) : User(dd)
     completeDliveries_ = dd.completeDliveries_;
     totalEarnings_ = dd.totalEarnings_;
 
-    userType_ = UserType::DRIVER;
+    userType_ = UserType::Driver;
 }
 
 void DliveryDriver::displayInfo() 

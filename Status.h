@@ -1,6 +1,5 @@
-//
-//
-// Author: Haytham Ashraf
+
+
 
 #ifndef _ORDER_STATUS_H_
 #define _ORDER_STATUS_H_
@@ -8,21 +7,20 @@
 #include <string>
 
 enum class OrderStatus {
-    NONE = 0,
     PENDING,
     PREPARING,
-    OUT_OF_DLIVERY,
+    OUT_OF_DELIVERY,
     DELIVERED,
     CANCELLED
 };
 
 enum class UserType {
-    CUSTOMER,
-    DRIVER
+    Customer,
+    Driver
 };
 
 
-std::string OrderStatusName(OrderStatus st);
-std::string UserTypeName(UserType ut);
+std::string orderStatusName(OrderStatus st);
+std::string userTypeName(UserType ut);
 
 #endif // _ORDER_STATUS_H_
