@@ -43,6 +43,9 @@ public:
     std::string getVehicalType();
     int getCompleteDliveries();
     double getTotalEarnings();
+	
+	// Extra
+	friend std::ostream& operator<< (std::ostream& os, const DliveryDriver& dd);
 };
 
 

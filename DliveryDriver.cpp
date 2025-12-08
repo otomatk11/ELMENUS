@@ -94,3 +94,12 @@ double DliveryDriver::getTotalEarnings()
 {
     return totalEarnings_;
 }
+
+ostream& operator<<(ostream& os, const DliveryDriver& dd) {
+	
+	os << "Complete Deliveries: " << dd.completeDliveries_;
+	os << ", Total Earning: " << dd.totalEarnings_;
+	os << endl;
+	
+	return os;
+}

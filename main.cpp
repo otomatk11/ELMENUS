@@ -57,7 +57,15 @@ const string TITLE = "ELMENUS MANAGEMENT SYSTEM v1.0";
 // name of file to save orders
 const string ORDERS_FILE = "orders.txt";
 
+// driver statistics file 
+const string DRIVERS_FILE = "drivers.txt";
+
+// driver statistics binary file 
+const string DRIVERS_BIN_FILE = "drivers.bin";
+
 // data for program
+int drivers_counter = 0;
+int customers_counter = 0;
 User*  users[50];  int user_i = 0;
 Order* orders[50]; int order_i = 0;
 
@@ -75,6 +83,10 @@ int main() {
 
 	bool shouldExit = false;
 
+	fstream orders_file;
+	fstream drivers_file;
+	fstream drivers_bin_file;
+	
     // print program's splash and menu
     printHeader(3, TITLE, false);
     printMenu();
@@ -100,8 +112,14 @@ int main() {
 				prompt("Delivery Address: ", DataType::STR, &deliveryA);
 				prompt("Loyalty Points: ", DataType::INT, &loyaltyP);
 				
-				users[user_i] = new Customer(id, n, p, deliveryA, loyaltyP);
-				user_i++;
+				users[user_i++] = new Customer(
+					id,
+					n,
+					p,
+					deliveryA,
+					loyaltyP
+				);
+				customers_counter++;
 			} break;
 			
 			case MenuItem::REG_DRI: // register a new driver
@@ -120,7 +138,7 @@ int main() {
 				prompt("Complete Deliveries: ", DataType::INT, &completeDeliveries);
 				prompt("Total Earning: ", DataType::DOUBLE, &totalEarning);
 				
-				users[user_i] = new DliveryDriver(
+				users[user_i++] = new DliveryDriver(
                     id,
                     n,
                     p,
@@ -128,24 +146,27 @@ int main() {
                     completeDeliveries,
                     totalEarning
 				);
-				
-				user_i++;
+				drivers_counter++;
 			} break;
 			
 			case MenuItem::NEW_ORDER: // create a new order
 			{
-				int orderId;	
-				prompt("Order ID: ", DataType::INT, &orderId);
-				
-                if(!displayUsers(UserType::Customer)) {
+				// choose customer
+				if(!displayUsers(UserType::Customer)) {
                     cout << " . No Customers\n";
                     continue;
                 }
-                
-                int cus_index;
+				
+				int cus_index;
+				int id;
+				
                 prompt("Choose Customer: ", DataType::INT, &cus_index);
-
-                // TBD ... create new order
+				prompt("Order ID: ", DataType::INT, &id);
+				
+				// TBD ... check user being customer 
+				
+				Customer* cus = static_cast<Customer*>(users[cus_index]);
+				orders[order_i++] = new Order(id, cus);
 			} break;
 			
 			case MenuItem::ADD:       // adds items to order
@@ -155,12 +176,11 @@ int main() {
                 
                 prompt("OrderID: ", DataType::INT, &addOrderID);       
                 prompt("Number of itmes: ", DataType::INT, &numAddItems); 
-
-                FoodItem* items = new FoodItem[numAddItems];
                 
                 for(int i = 0; i< numAddItems; i++)
                 {
-                    // ...
+					FoodItem item;
+					
                     cout << "Item " << i+1 << "\n";
 
                     string name;
@@ -168,26 +188,36 @@ int main() {
                     double price;
 
                     // request
-                    prompt("Name: ", DataType::STR, &name);
-                    prompt("Price: ", DataType::DOUBLE, &price);
-                    prompt("Quantity: ", DataType::INT, &quantity);
+                    prompt("\tName: ", DataType::STR, &name);
+                    prompt("\tPrice: ", DataType::DOUBLE, &price);
+                    prompt("\tQuantity: ", DataType::INT, &quantity);
 
                     // fill in
-                    items[i].setItemName(name);
-                    items[i].setPrice(price);
-                    items[i].setQuantity(quantity);
+                    item.setItemName(name);
+                    item.setPrice(price);
+                    item.setQuantity(quantity);
+				
+					// TBD ... check orderID
+					
+					orders[addOrderID]->addItem(item);
                 }
-
-                // TBD ... Add to order
-
+				
             } break;
 			
 			case MenuItem::ASSIGN:    // assign driver to order
 			{
-                cout << "Enter the driver's ID and the order ID: " << endl;
+                // cout << "Enter the driver's ID and the order ID: " << endl;
                 
-                // TBD ...
-
+				int driverID;
+				int orderID;
+				
+				prompt("DriverID: ", DataType::INT, &driverID);
+				prompt("OrderID: ", DataType::INT, &orderID);
+				
+				// TBD ... check orderID and driverID
+				
+				DliveryDriver* dd = static_cast<DliveryDriver*>(users[driverID]);
+				orders[orderID]->assignDriver(dd);
             } break;
 			
 			case MenuItem::UPDATE:    // update order status
@@ -197,19 +227,24 @@ int main() {
                 prompt("OrderID: ", DataType::INT, &orderID);
 
                 // ask for new status
+				OrderStatus status[5];
+				status[0] = OrderStatus::PENDING;
+				status[1] = OrderStatus::PREPARING;
+				status[2] = OrderStatus::OUT_OF_DELIVERY;
+				status[3] = OrderStatus::DELIVERED;
+				status[4] = OrderStatus::CANCELLED;
 
                 string list[5];
-                list[0] = orderStatusName(OrderStatus::PENDING);
-                list[1] = orderStatusName(OrderStatus::PREPARING);
-                list[2] = orderStatusName(OrderStatus::OUT_OF_DELIVERY);
-                list[3] = orderStatusName(OrderStatus::DELIVERED);
-                list[4] = orderStatusName(OrderStatus::CANCELLED);
+                list[0] = orderStatusName(status[0]);
+                list[1] = orderStatusName(status[1]);
+                list[2] = orderStatusName(status[2]);
+                list[3] = orderStatusName(status[3]);
+                list[4] = orderStatusName(status[4]);
 
                 int pickIndex = 
                     prompt_constraints("Choose a status: ", 5, list);
 
-                // TBD ... update status
-
+                orders[orderID]->updateStatus(status[pickIndex]);
             } break;
 			
 			case MenuItem::DIS_ORD:   // display order status
@@ -217,8 +252,6 @@ int main() {
                 int idOfOrder;
 
                 prompt("OrderID: ", DataType::INT, &idOfOrder);
-
-                // TBD ... index range checking
 
                 orders[idOfOrder]->displayOrder();
             } break;
@@ -228,10 +261,6 @@ int main() {
                 int cusID;
                 prompt("CustomerID: ", DataType::INT, &cusID);
 
-                // TBD ... index range checking
-
-                // cout << "Enter customer ID: "<< endl;
-                // cin>> cusID;
                 users[cusID]->displayInfo();
             } break;
 			
@@ -240,9 +269,6 @@ int main() {
                 int drivID;
                 prompt("DriverID: ", DataType::INT, &drivID);
 
-                // TBD ... index range checking
-
-                // cout << "Enter driver ID: "<< endl;
                 users[drivID]->displayInfo();
             } break;
 			
@@ -262,32 +288,96 @@ int main() {
 			case MenuItem::SAVE_ORDERS:  // save completed orders to a file
 			{
                 if(order_i == 0) {
-                    cout << " . No orders to write\n";
+                    cout << " . No orders registered\n";
                     continue;
                 }
 
-                fstream file(ORDERS_FILE, fstream::out);
-                if(!file.is_open()) {
-                    cout << "error, couldn\'t open file \'" << ORDERS_FILE << "\' for writing\n";
-                    continue;
-                }
+				// open file connection
+				if(!orders_file.is_open()) {
+					
+					orders_file.open(ORDERS_FILE, fstream::out | fstream::app);
+					if(orders_file.is_open()) {
+						cout << "Failed to open " << ORDERS_FILE << " file\n";
+						exit(0);
+					}
+				}
 
                 int i;
                 for(i = 0; i < order_i; i++) {
-                    file << orders[i];
+                    orders_file << orders[i];
                 }
 
                 cout << "written " << i+1 << " orders to " << ORDERS_FILE << "\n";
-                file.close();
+                // orders_file.close();
             } break;
 			
 			case MenuItem::SAVE_DRIVERS: // save driver statistics to a file
 			{
+				if(drivers_counter == 0) {
+					cout << " . No Drivers registered\n";
+					continue;
+				}
 
+				// open file connection
+				if(!drivers_file.is_open()) {
+					
+					drivers_file.open(DRIVERS_FILE, fstream::out | fstream::app);
+					if(orders_file.is_open()) {
+						cout << "Failed to open " << DRIVERS_FILE << " file\n";
+						exit(0);
+					}
+				}
+
+                int counter = 0;
+                for(int i = 0; i < user_i; i++) {
+					
+					if(users[i]->getType() == UserType::Driver) {
+						DliveryDriver* dd = static_cast<DliveryDriver*>(users[i]);
+						drivers_file << dd;
+						counter++;
+					}
+                }
+
+                cout << "written " << counter+1 << " drivers to " << DRIVERS_FILE << "\n";
+                // orders_file.close();
             } break;
 			
 			case MenuItem::SAVE_ORDERS_BIN: // save orders to a binary file
-			{} break;
+			{
+				if(drivers_counter == 0) {
+					cout << " . No Drivers registered\n";
+					continue;
+				}
+
+				// open file connection
+				if(!drivers_bin_file.is_open()) {
+					
+					drivers_bin_file.open(DRIVERS_BIN_FILE, fstream::out | fstream::binary | fstream::app);
+					if(orders_file.is_open()) {
+						cout << "Failed to open " << DRIVERS_BIN_FILE << " file\n";
+						exit(0);
+					}
+				}
+
+                int counter = 0;
+                for(int i = 0; i < user_i; i++) {
+					
+					if(users[i]->getType() == UserType::Driver) {
+						DliveryDriver* dd = static_cast<DliveryDriver*>(users[i]);
+						
+						int cd = dd->getCompleteDliveries();
+						double earning = dd->getTotalEarnings();
+						
+						drivers_bin_file.write((const char*)(&cd), sizeof(int));
+						drivers_bin_file.write((const char*)(&earning), sizeof(double));
+						
+						counter++;
+					}
+                }
+
+                cout << "written " << counter+1 << " drivers to " << DRIVERS_BIN_FILE << "\n";
+                // orders_file.close();
+			} break;
 			
 			case MenuItem::LOAD:            // load order by position
 			{} break;
@@ -313,6 +403,10 @@ int main() {
 	
 	for(int i = 0; i < order_i; i++)
 		delete orders[i];
+	
+	orders_file.close();
+	drivers_file.close();
+	drivers_bin_file.close();
 
     return 0;
 }
@@ -446,8 +540,15 @@ void prompt(const string& str, DataType dt, void* out) {
 
 		cout << str;
 
-        if(dt == DataType::STR)
-            cin.ignore();
+        if(dt == DataType::STR) {
+			
+			// Source - https://stackoverflow.com/a
+			// Posted by Evan Teran, modified by community. See post 'Timeline' for change history
+			// Retrieved 2025-12-07, License - CC BY-SA 3.0
+
+			std::cin.ignore((unsigned int)~0);
+		}
+
 
         getline(cin, input);
 
@@ -531,7 +632,15 @@ int prompt_constraints(const string& str, int size, const string* list) {
     }
 
     int index;
-    prompt(str, DataType::INT, &index);
+	
+	while(true) {
+		prompt(str, DataType::INT, &index);
+		
+		if(index < size && index >= 0)
+			break;
+		
+		cout << "out of range!\n";
+	}
 
     return index;
 }
