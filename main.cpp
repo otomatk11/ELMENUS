@@ -4,9 +4,11 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include "Type.h"
 #include "Status.h"
 #include "User.h"
 #include "Order.h"
+#include "FileData.h"
 
 using namespace std;
 
@@ -42,26 +44,12 @@ enum MenuItem {
 	EXIT,            // exit the system
 };
 
-enum class DataType {
-	INT,
-    STR,
-    DOUBLE
-};
-
 // width of menu 
 const int MENU_WIDTH = 40;
 
 // title of the application
 const string TITLE = "ELMENUS MANAGEMENT SYSTEM v1.0";
 
-// name of file to save orders
-const string ORDERS_FILE = "orders.txt";
-
-// driver statistics file 
-const string DRIVERS_FILE = "drivers.txt";
-
-// driver statistics binary file 
-const string DRIVERS_BIN_FILE = "drivers.bin";
 
 // data for program
 int drivers_counter = 0;
@@ -74,7 +62,6 @@ bool   displayUsers(UserType filter);
 void   breakLine(const string& title);
 void   printHeader(int rows, const string& title, bool bottom_line);
 void   printMenu();
-string dataTypeName(DataType dt);
 void   prompt(const string& str, DataType dt, void* out);
 int    prompt_constraints(const string& str, int size, const string* list);
 
@@ -83,9 +70,7 @@ int main() {
 
 	bool shouldExit = false;
 
-	fstream orders_file;
-	fstream drivers_file;
-	fstream drivers_bin_file;
+	FileData* fd = new FileData;
 	
     // print program's splash and menu
     printHeader(3, TITLE, false);
@@ -112,6 +97,7 @@ int main() {
 				prompt("Delivery Address: ", DataType::STR, &deliveryA);
 				prompt("Loyalty Points: ", DataType::INT, &loyaltyP);
 				
+                customers_counter++;
 				users[user_i++] = new Customer(
 					id,
 					n,
@@ -119,7 +105,6 @@ int main() {
 					deliveryA,
 					loyaltyP
 				);
-				customers_counter++;
 			} break;
 			
 			case MenuItem::REG_DRI: // register a new driver
@@ -138,6 +123,7 @@ int main() {
 				prompt("Complete Deliveries: ", DataType::INT, &completeDeliveries);
 				prompt("Total Earning: ", DataType::DOUBLE, &totalEarning);
 				
+                drivers_counter++;
 				users[user_i++] = new DliveryDriver(
                     id,
                     n,
@@ -146,7 +132,6 @@ int main() {
                     completeDeliveries,
                     totalEarning
 				);
-				drivers_counter++;
 			} break;
 			
 			case MenuItem::NEW_ORDER: // create a new order
@@ -226,6 +211,12 @@ int main() {
 
                 prompt("OrderID: ", DataType::INT, &orderID);
 
+                // to update order status, we create two lists
+                //  1. status list, for all avilable status.
+                //  2. list name, for status strings name
+                // we let the user choose the status based on its index in list
+                // and we map that index into 'status'.
+
                 // ask for new status
 				OrderStatus status[5];
 				status[0] = OrderStatus::PENDING;
@@ -283,7 +274,20 @@ int main() {
             } break;
 			
 			case MenuItem::DIS_SYS: // display system statistics
-			{} break;
+			{
+                // in this case, we just print some info about the system.
+                // like number of customers, delivery drivers. And Orders.
+
+                cout << " . System Statistics:\n";
+
+                // Users
+                cout << "Registered Users: " << user_i << "\n";
+                cout << "\t" << setw(4) << customers_counter << " Customers.\n";
+                cout << "\t" << setw(4) << drivers_counter << " Drivers.\n";
+
+                // Orders
+                cout << "Number of Orders: " << order_i << "\n";
+            } break;
 			
 			case MenuItem::SAVE_ORDERS:  // save completed orders to a file
 			{
@@ -292,23 +296,12 @@ int main() {
                     continue;
                 }
 
-				// open file connection
-				if(!orders_file.is_open()) {
-					
-					orders_file.open(ORDERS_FILE, fstream::out | fstream::app);
-					if(orders_file.is_open()) {
-						cout << "Failed to open " << ORDERS_FILE << " file\n";
-						exit(0);
-					}
-				}
-
                 int i;
                 for(i = 0; i < order_i; i++) {
-                    orders_file << orders[i];
+                    fd->saveOrder(*orders[order_i]);
                 }
 
-                cout << "written " << i+1 << " orders to " << ORDERS_FILE << "\n";
-                // orders_file.close();
+                cout << "written " << i+1 << " orders\n";
             } break;
 			
 			case MenuItem::SAVE_DRIVERS: // save driver statistics to a file
@@ -318,28 +311,15 @@ int main() {
 					continue;
 				}
 
-				// open file connection
-				if(!drivers_file.is_open()) {
-					
-					drivers_file.open(DRIVERS_FILE, fstream::out | fstream::app);
-					if(orders_file.is_open()) {
-						cout << "Failed to open " << DRIVERS_FILE << " file\n";
-						exit(0);
-					}
-				}
-
                 int counter = 0;
                 for(int i = 0; i < user_i; i++) {
-					
-					if(users[i]->getType() == UserType::Driver) {
-						DliveryDriver* dd = static_cast<DliveryDriver*>(users[i]);
-						drivers_file << dd;
+                    if(users[i]->getType() == UserType::Driver) {
+                        fd->saveDriver((DliveryDriver&)(*users[i]));
 						counter++;
 					}
                 }
 
-                cout << "written " << counter+1 << " drivers to " << DRIVERS_FILE << "\n";
-                // orders_file.close();
+                cout << "written " << counter+1 << " drivers\n";
             } break;
 			
 			case MenuItem::SAVE_ORDERS_BIN: // save orders to a binary file
@@ -349,45 +329,46 @@ int main() {
 					continue;
 				}
 
-				// open file connection
-				if(!drivers_bin_file.is_open()) {
-					
-					drivers_bin_file.open(DRIVERS_BIN_FILE, fstream::out | fstream::binary | fstream::app);
-					if(orders_file.is_open()) {
-						cout << "Failed to open " << DRIVERS_BIN_FILE << " file\n";
-						exit(0);
-					}
-				}
-
                 int counter = 0;
                 for(int i = 0; i < user_i; i++) {
 					
 					if(users[i]->getType() == UserType::Driver) {
-						DliveryDriver* dd = static_cast<DliveryDriver*>(users[i]);
-						
-						int cd = dd->getCompleteDliveries();
-						double earning = dd->getTotalEarnings();
-						
-						drivers_bin_file.write((const char*)(&cd), sizeof(int));
-						drivers_bin_file.write((const char*)(&earning), sizeof(double));
-						
+                        fd->saveDriverBIN((DliveryDriver&)(*users[i]));
 						counter++;
 					}
                 }
 
-                cout << "written " << counter+1 << " drivers to " << DRIVERS_BIN_FILE << "\n";
-                // orders_file.close();
+                cout << "written " << counter+1 << " drivers\n";
 			} break;
 			
 			case MenuItem::LOAD:            // load order by position
-			{} break;
+			{
+                // given a file with orders, load an order 
+                // from the file based on its position in file.
+
+                int position;
+
+                prompt("Order Position: ", DataType::INT, &position);
+
+                Order* order = fd->loadOrder(position);
+
+                // we add that order to list
+                orders[order_i++] = order;
+
+            } break;
 			
 			case MenuItem::BIN_STAT:        // binary file statistics
-			{} break;
+			{
+                // in this case, just print how many bytes are writter to the 
+                // driver binary file.
+
+                const int bytes = fd->getBINSize();
+                cout << bytes << " Bytes are writter\n";
+            } break;
 			
             case MenuItem::MENU: // print menu
                 printMenu();
-				break;
+                break;
 
             case MenuItem::EXIT: // exit program
                 shouldExit = true;
@@ -404,9 +385,8 @@ int main() {
 	for(int i = 0; i < order_i; i++)
 		delete orders[i];
 	
-	orders_file.close();
-	drivers_file.close();
-	drivers_bin_file.close();
+
+	delete fd;
 
     return 0;
 }
@@ -523,15 +503,6 @@ void printMenu() {
     // breakLine("");
 }
 
-string dataTypeName(DataType dt) {
-    switch(dt) {
-        case DataType::INT: return "int";
-        case DataType::STR: return "string";
-        case DataType::DOUBLE: return "double";
-    }
-    return "Unknown";
-}
-
 void prompt(const string& str, DataType dt, void* out) {
 
 	string input = "";
@@ -636,6 +607,7 @@ int prompt_constraints(const string& str, int size, const string* list) {
 	while(true) {
 		prompt(str, DataType::INT, &index);
 		
+        // is in range?
 		if(index < size && index >= 0)
 			break;
 		
