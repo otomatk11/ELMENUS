@@ -57,7 +57,6 @@ int customers_counter = 0;
 User*  users[50];  int user_i = 0;
 Order* orders[50]; int order_i = 0;
 
-
 bool   displayUsers(UserType filter);
 void   breakLine(const string& title);
 void   printHeader(int rows, const string& title, bool bottom_line);
@@ -65,7 +64,8 @@ void   printMenu();
 void   prompt(const string& str, DataType dt, void* out);
 int    prompt_constraints(const string& str, int size, const string* list);
 Order* findOrder(string str);
-User* findUser(string str);
+User*  findUser(string str);
+
 
 int main() {
 
@@ -133,6 +133,8 @@ int main() {
                     completeDeliveries,
                     totalEarning
 				);
+
+                cout << id << " has been added\n";
 			} break;
 			
 			case MenuItem::NEW_ORDER: // create a new order
@@ -206,11 +208,11 @@ int main() {
 				prompt("OrderID: ", DataType::STR, &order_ID);
 				
 				
-                order= findOrder(driver_ID);
-                driver= findUser(order_ID);
+                order = findOrder(driver_ID);
+                driver = findUser(order_ID);
                 
-				DliveryDriver* dd = static_cast<DliveryDriver*>(users[driverID]);
-				orders[orderID]->assignDriver(dd);
+				DliveryDriver* dd = static_cast<DliveryDriver*>(driver);
+				order->assignDriver(dd);
             } break;
 			
 			case MenuItem::UPDATE:    // update order status
@@ -298,22 +300,25 @@ int main() {
 			
 			case MenuItem::CMP:     // compare two orders by total
 			{
-                Order* order1, order2;
-                string oredrID_1;orderID_2;
+                Order* order1;
+                Order* order2;
+                string orderID_1, orderID_2;
+
                 prompt("Order 1\'s ID: ", DataType::STR, &orderID_1);
                 prompt("Order 2\'s ID: ", DataType::STR, &orderID_2);
 
-               order1= findOrder(orderID_1);
-               order2= findOrder(orderID_2);
-               
-               if( order1> order2)
-               {
-                cout <<"The first order cost more than the second order"<< endl;
-               }
-               else 
-                cout<< "The second order cost more than the first order"<< endl;
-                // TBD ...
+                order1 = findOrder(orderID_1);
+                order2 = findOrder(orderID_2);
 
+                if(!order1 || !order2) {
+                    cout << " . No Orders!\n";
+                    break;
+                }
+                
+                if(*order1 > *order2)
+                    cout << "The first order cost more than the second order" << endl;
+                else
+                    cout << "The second order cost more than the first order" << endl;
             } break;
 			
 			case MenuItem::DIS_SYS: // display system statistics
@@ -341,7 +346,7 @@ int main() {
 
                 int i;
                 for(i = 0; i < order_i; i++) {
-                    fd->saveOrder(*orders[order_i]);
+                    fd->saveOrder( *(orders[order_i]) );
                 }
 
                 cout << "written " << i+1 << " orders\n";
@@ -357,7 +362,7 @@ int main() {
                 int counter = 0;
                 for(int i = 0; i < user_i; i++) {
                     if(users[i]->getType() == UserType::Driver) {
-                        fd->saveDriver((DliveryDriver&)(*users[i]));
+                        fd->saveDriver((DliveryDriver&)( *(users[i])) );
 						counter++;
 					}
                 }
@@ -368,20 +373,18 @@ int main() {
 			case MenuItem::SAVE_ORDERS_BIN: // save orders to a binary file
 			{
 				if(drivers_counter == 0) {
-					cout << " . No Drivers registered\n";
+					cout << " . No Orders\n";
 					continue;
 				}
 
                 int counter = 0;
-                for(int i = 0; i < user_i; i++) {
+                for(int i = 0; i < order_i; i++) {
 					
-					if(users[i]->getType() == UserType::Driver) {
-                        fd->saveDriverBIN((DliveryDriver&)(*users[i]));
-						counter++;
-					}
+                    fd->saveOrderBIN( *(orders[i]) );
+					counter++;
                 }
 
-                cout << "written " << counter+1 << " drivers\n";
+                cout << "written " << counter+1 << " order\n";
 			} break;
 			
 			case MenuItem::LOAD:            // load order by position
@@ -393,11 +396,12 @@ int main() {
 
                 prompt("Order Position: ", DataType::INT, &position);
 
-                Order* order = fd->loadOrder(position);
+                OrderDetails order = fd->loadOrder(position);
+
+                printOrderDetails(order);
 
                 // we add that order to list
-                orders[order_i++] = order;
-
+                // orders[order_i++] = order;
             } break;
 			
 			case MenuItem::BIN_STAT:        // binary file statistics
@@ -560,9 +564,8 @@ void prompt(const string& str, DataType dt, void* out) {
 			// Posted by Evan Teran, modified by community. See post 'Timeline' for change history
 			// Retrieved 2025-12-07, License - CC BY-SA 3.0
 
-			std::cin.ignore((unsigned int)~0);
+			// std::cin.ignore((unsigned int)~0);
 		}
-
 
         getline(cin, input);
 
@@ -659,29 +662,28 @@ int prompt_constraints(const string& str, int size, const string* list) {
 
     return index;
 }
+
 Order* findOrder(string str)
 {
-    for(int j=0; j<50; j++)
+    for(int j = 0; j < order_i; j++)
     {
-       if(orders[j]== str)
-       {
-        return orders[j];
-       }
-        
+        if(orders[j]->getOrderId() == str)
+        {
+            return orders[j];
+        }
     }
-    cout <<"No order exits with the ID enterd"<< endl;
+    cout << "No order exits with the ID enterd" << endl;
     return NULL;
 }
+
 User* findUser(string str)
 {
-    
-    for(int j=0; j<50; j++)
+    for(int j = 0; j < user_i; j++)
     {
-       if(users[j]== str)
-       {
-        return users[j];
-       }
-        
+        if(users[j]->getUserID() == str)
+        {
+            return users[j];
+        }
     }
     cout <<"No customer or driver exits with the ID enterd"<< endl;
     return NULL;

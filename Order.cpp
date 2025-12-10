@@ -13,6 +13,15 @@ using namespace std;
 
 int Order::totalOrders_ = 0;
 
+
+void printOrderDetails(OrderDetails& details) {
+    cout << "OrderID: " << details.id << endl;
+    cout << "Status: " << orderStatusName((OrderStatus) details.status ) << endl;
+    cout << "FoodItems: " << details.items << endl;
+    cout << "Capacity: " << details.capacity << endl;
+    cout << endl;
+}
+
 Order::Order()
 {
     ++totalOrders_;
@@ -203,7 +212,14 @@ Order& Order::operator+ (const Order& order)
 // print order details, "What Details?"
 ostream& operator<<(ostream& os, const Order& order)
 {
-    os << "ItemCount: " << order.itemCount_ << endl;
+
+    // following the same order as in OrderDetails
+    os << order.orderId_;
+    os << (int)order.status_;
+    os << order.itemCount_;
+    os << order.capacity_;
+    
+    /*os << "ItemCount: " << order.itemCount_ << endl;
     os << "Items: \n" << endl; 
     
     for(int i = 0; i < order.itemCount_; i++) {
@@ -211,7 +227,7 @@ ostream& operator<<(ostream& os, const Order& order)
         os << "\t\t" << "Name: " << order.items_[i].getItemName() << endl;
         os << "\t\t" << "Price: " << order.items_[i].getPrice() << endl;
         os << "\t\t" << "Quantity: " << order.items_[i].getQuantity() << endl;
-    }
+    }*/
 
     return os;
 }

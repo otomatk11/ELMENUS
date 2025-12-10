@@ -11,6 +11,8 @@ set( SOURCES
 	Customer.cpp
 	DliveryDriver.cpp
 	Order.cpp
+	FileData.cpp
+	Type.cpp
 )
 
 add_executable(elmenus)

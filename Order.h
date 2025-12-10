@@ -9,6 +9,16 @@
 #include "Customer.h"
 #include "DliveryDriver.h"
 
+struct OrderDetails {
+    std::string id;
+    OrderStatus status;
+    // number of foodItems that were stored
+    int items;
+    int capacity;
+};
+
+void printOrderDetails(OrderDetails& details);
+
 class Order
 {
 private:

@@ -7,7 +7,7 @@
 using namespace std;
 
 
-DliveryDriver::DliveryDriver() 
+DliveryDriver::DliveryDriver() : User()
 {
     vehicalType_ = "";
     completeDliveries_ = 0;
@@ -23,7 +23,8 @@ DliveryDriver::DliveryDriver(
 	std::string vehicalType,
 	int completeDliveries,
 	double totalEarnings
-) {
+) : User(id, n, p)
+{
     vehicalType_ = vehicalType;
     completeDliveries_ = completeDliveries;
     totalEarnings_ = totalEarnings;

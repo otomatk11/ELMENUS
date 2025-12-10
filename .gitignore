@@ -5,3 +5,7 @@ Makefile
 *.so
 *.out
 *.pdf
+json.*
+drivers.txt
+orders.bin
+oders.txt
