@@ -64,7 +64,8 @@ void   printHeader(int rows, const string& title, bool bottom_line);
 void   printMenu();
 void   prompt(const string& str, DataType dt, void* out);
 int    prompt_constraints(const string& str, int size, const string* list);
-
+Order* findOrder(string str);
+User* findUser(string str);
 
 int main() {
 
@@ -158,10 +159,13 @@ int main() {
 			{
                 int numAddItems;
                 int addOrderID;
+                string addOrder_ID;
                 
-                prompt("OrderID: ", DataType::INT, &addOrderID);       
+                prompt("OrderID: ", DataType::STR, &addOrder_ID);       
                 prompt("Number of itmes: ", DataType::INT, &numAddItems); 
                 
+                addOrderID= stoi(addOrder_ID);
+
                 for(int i = 0; i< numAddItems; i++)
                 {
 					FoodItem item;
@@ -193,14 +197,18 @@ int main() {
 			{
                 // cout << "Enter the driver's ID and the order ID: " << endl;
                 
-				int driverID;
-				int orderID;
+				User* driver;
+				Order* order;
+                string driver_ID;
+                string order_ID;
 				
-				prompt("DriverID: ", DataType::INT, &driverID);
-				prompt("OrderID: ", DataType::INT, &orderID);
+				prompt("DriverID: ", DataType::STR, &driver_ID);
+				prompt("OrderID: ", DataType::STR, &order_ID);
 				
-				// TBD ... check orderID and driverID
 				
+                order= findOrder(driver_ID);
+                driver= findUser(order_ID);
+                
 				DliveryDriver* dd = static_cast<DliveryDriver*>(users[driverID]);
 				orders[orderID]->assignDriver(dd);
             } break;
@@ -240,35 +248,70 @@ int main() {
 			
 			case MenuItem::DIS_ORD:   // display order status
 			{
-                int idOfOrder;
+                string idOfOrder;
+                Order* dispOrder;
 
-                prompt("OrderID: ", DataType::INT, &idOfOrder);
+                prompt("OrderID: ", DataType::STR, &idOfOrder);
+                dispOrder= findOrder(idOfOrder);
 
-                orders[idOfOrder]->displayOrder();
+                if(dispOrder == NULL)
+                {
+                    cout<< "No order with entered ID"<< endl;
+                    break;
+                }
+                dispOrder->displayOrder();
             } break;
 			
 			case MenuItem::DIS_CUS: // display custorm information
 			{
-                int cusID;
-                prompt("CustomerID: ", DataType::INT, &cusID);
+                string cusID;
+                User* dispCus;
 
-                users[cusID]->displayInfo();
+                prompt("CustomerID: ", DataType::STR, &cusID);
+                dispCus= findUser(cusID);
+
+                if(dispCus == NULL)
+                {
+                    cout<< "No customer with the entered ID "<< endl;
+                    break;
+                }
+
+                dispCus->displayInfo();
             } break;
 			
 			case MenuItem::DIS_DRI: // display dirver information
 			{
-                int drivID;
-                prompt("DriverID: ", DataType::INT, &drivID);
+                string drivID;
+                User* dispDriver;
 
-                users[drivID]->displayInfo();
+                prompt("DriverID: ", DataType::STR, &drivID);
+                dispDriver= findUser(drivID);
+                
+                if(dispDriver == NULL)
+                {
+                    cout <<"No driver with the entered ID "<< endl;
+                    break;
+                }
+
+                dispDriver->displayInfo();
             } break;
 			
 			case MenuItem::CMP:     // compare two orders by total
 			{
-                int orderID1, orderID2;
-                prompt("Order 1\'s ID: ", DataType::INT, &orderID1);
-                prompt("Order 2\'s ID: ", DataType::INT, &orderID2);
+                Order* order1, order2;
+                string oredrID_1;orderID_2;
+                prompt("Order 1\'s ID: ", DataType::STR, &orderID_1);
+                prompt("Order 2\'s ID: ", DataType::STR, &orderID_2);
 
+               order1= findOrder(orderID_1);
+               order2= findOrder(orderID_2);
+               
+               if( order1> order2)
+               {
+                cout <<"The first order cost more than the second order"<< endl;
+               }
+               else 
+                cout<< "The second order cost more than the first order"<< endl;
                 // TBD ...
 
             } break;
@@ -615,4 +658,31 @@ int prompt_constraints(const string& str, int size, const string* list) {
 	}
 
     return index;
+}
+Order* findOrder(string str)
+{
+    for(int j=0; j<50; j++)
+    {
+       if(orders[j]== str)
+       {
+        return orders[j];
+       }
+        
+    }
+    cout <<"No order exits with the ID enterd"<< endl;
+    return NULL;
+}
+User* findUser(string str)
+{
+    
+    for(int j=0; j<50; j++)
+    {
+       if(users[j]== str)
+       {
+        return users[j];
+       }
+        
+    }
+    cout <<"No customer or driver exits with the ID enterd"<< endl;
+    return NULL;
 }
