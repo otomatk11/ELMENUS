@@ -14,11 +14,11 @@ using namespace std;
 int Order::totalOrders_ = 0;
 
 
-void printOrderDetails(OrderDetails& details) {
-    cout << "OrderID: " << details.id << endl;
-    cout << "Status: " << orderStatusName((OrderStatus) details.status ) << endl;
-    cout << "FoodItems: " << details.items << endl;
-    cout << "Capacity: " << details.capacity << endl;
+void printOrderDetails(OrderDetails* details) {
+    cout << "OrderID: " << details->id << endl;
+    cout << "Status: " << orderStatusName((OrderStatus) details->status ) << endl;
+    cout << "FoodItems: " << details->items << endl;
+    cout << "Capacity: " << details->capacity << endl;
     cout << endl;
 }
 
@@ -96,6 +96,11 @@ Order::~Order()
         delete[] items_;
         items_ = NULL;
     }
+}
+
+OrderStatus Order::getStatus()
+{
+	return status_;
 }
 
 void Order::addItem(const FoodItem& item)
@@ -214,10 +219,10 @@ ostream& operator<<(ostream& os, const Order& order)
 {
 
     // following the same order as in OrderDetails
-    os << order.orderId_;
-    os << (int)order.status_;
-    os << order.itemCount_;
-    os << order.capacity_;
+    os << "ID: " << order.orderId_ << "\n";
+    os << "Status: " << (int)order.status_ << "\n";
+    os << "Items: " << order.itemCount_ << "\n";
+    os << "Capacity: " << order.capacity_ << "\n";
     
     /*os << "ItemCount: " << order.itemCount_ << endl;
     os << "Items: \n" << endl; 
@@ -233,7 +238,7 @@ ostream& operator<<(ostream& os, const Order& order)
 }
 
 // comparison, based on total price
-bool operator>(const Order& o1, const Order& o2)
+bool operator> (const Order& o1, const Order& o2)
 {
     return o1.calculateTotal() > o2.calculateTotal();
 }
@@ -255,6 +260,6 @@ void Order::resize_(int moreSize) {
     // update size
     itemCount_ += moreSize;
 
-    delete items_;
+    delete[] items_;
     items_ = temp;
 }

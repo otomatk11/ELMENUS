@@ -10,14 +10,14 @@
 #include "DliveryDriver.h"
 
 struct OrderDetails {
-    std::string id;
-    OrderStatus status;
+    std::string id; // ID:
+    OrderStatus status; // Status:
     // number of foodItems that were stored
-    int items;
-    int capacity;
+    int items; // Items:
+    int capacity; // Capacity:
 };
 
-void printOrderDetails(OrderDetails& details);
+void printOrderDetails(OrderDetails* details);
 
 class Order
 {
@@ -53,7 +53,7 @@ public:
     // update order status. And if status is 'OrderStatus::DELIVERD'-
     // call drivers's completeDlivery(), and add loyality points to customer.
     void updateStatus(OrderStatus status);
-
+	
     // return sum of all items
     double calculateTotal() const;
 
@@ -63,6 +63,7 @@ public:
     static int getTotalOrders();
 
     // getters
+	OrderStatus getStatus();
     std::string getOrderId();
     const Customer* getCustomer();
     const DliveryDriver* getDriver();

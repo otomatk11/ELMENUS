@@ -35,7 +35,7 @@ public:
     int getBINSize();
 
     // load an order from the binary file
-    OrderDetails loadOrder(int pos);
+    OrderDetails* loadOrder(int pos);
 };
 
 
