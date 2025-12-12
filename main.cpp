@@ -359,7 +359,14 @@ int main() {
                 if(*order1 > *order2)
                     cout << "The first order cost more than the second order" << endl;
                 else
-                    cout << "The second order cost more than the first order" << endl;
+                    {
+                        if(*order2 > *order1)
+                        {
+                            cout<< "The second order cost more than the first order "<< endl;
+                        }
+                        else
+                            cout << "Both order cost the same amount of money" << endl;
+                    }
             } break;
 			
 			case MenuItem::DIS_SYS: // display system statistics
