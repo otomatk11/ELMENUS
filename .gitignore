@@ -9,3 +9,5 @@ json.*
 drivers.txt
 orders.bin
 orders.txt
+*.zip
+*.7z
