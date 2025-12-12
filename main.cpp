@@ -474,15 +474,18 @@ int main() {
 
                 prompt("Order Position: ", DataType::INT, &position);
 
-                OrderDetails* od = fd->loadOrder(position);
-				if(!od) {
+                OrderRecord* record = fd->loadOrder(position);
+				if(!record) {
 					cout << "order position does not exist in file\n";
 					break;
 				}
 
-                printOrderDetails(od);
-				
-				delete od;
+                // printOrderDetails(od);
+                cout << "OrderID: " << record->id << endl;
+                cout << "Status: " << orderStatusName((OrderStatus)record->status) << endl;
+                cout << "Capacity: " << record->capacity << endl;
+
+				delete record;
             } break;
 			
 			case MenuItem::BIN_STAT:        // binary file statistics

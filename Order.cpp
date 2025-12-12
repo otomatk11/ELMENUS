@@ -18,12 +18,7 @@ using namespace std;
 int Order::totalOrders_ = 0;
 
 
-void printOrderDetails(OrderDetails* details) {
-    cout << "OrderID: " << details->id << endl;
-    cout << "Status: " << orderStatusName((OrderStatus) details->status ) << endl;
-    cout << "Capacity: " << details->capacity << endl;
-    cout << endl;
-}
+
 
 Order::Order()
 {

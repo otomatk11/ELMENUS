@@ -15,10 +15,13 @@
 #include <string>
 
 #include "User.h"
-// #include "Customer.h"
-// #include "DliveryDriver.h"
 #include "Order.h"
 
+struct OrderRecord {
+    int id; 	    // "ID: "
+    int status;     // ", Status: "
+    int capacity;   // ", Capacity: "
+};
 
 class FileData {
 private:
@@ -39,7 +42,7 @@ public:
     int getBINSize();
 
     // load an order from the binary file
-    OrderDetails* loadOrder(int pos);
+    OrderRecord* loadOrder(int pos);
 };
 
 

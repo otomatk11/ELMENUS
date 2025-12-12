@@ -13,15 +13,6 @@
 #include "Customer.h"
 #include "DliveryDriver.h"
 
-struct OrderDetails 
-{
-    int id; 			// "ID: "
-    int status; 		// ", Status: "
-    int capacity; 		// ", Capacity: "
-};
-
-void printOrderDetails(OrderDetails* details);
-
 class Order
 {
 private:

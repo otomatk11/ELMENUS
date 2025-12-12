@@ -17,13 +17,25 @@ const string ORDERS_FILE = "orders.txt";
 const string DRIVERS_FILE = "drivers.txt";
 
 // driver statistics binary file 
-const string ORDERS_BIN_FILE = "orders.bin";
+const string ORDERS_BIN_FILE = "orders.dat";
+
+/*
+void printOrderDetails(OrderDetails* details) {
+    cout << "OrderID: " << details->id << endl;
+    cout << "Status: " << orderStatusName((OrderStatus) details->status ) << endl;
+    cout << "Capacity: " << details->capacity << endl;
+    cout << endl;
+}
+*/
 
 FileData::FileData()
 {
     orders_file.open(ORDERS_FILE, fstream::out);
     drivers_file.open(DRIVERS_FILE, fstream::out);
-    orders_bin_file.open(ORDERS_BIN_FILE, fstream::out | fstream::in);
+
+	// this line fails, the file can't be opened,
+	// using fstream::trunc, solves the problem.
+    orders_bin_file.open(ORDERS_BIN_FILE, fstream::out | fstream::in | fstream::trunc);
 }
 
 FileData::~FileData()
@@ -56,21 +68,23 @@ void FileData::saveOrderBIN(Order& order)
 		return;
 	}
 	
-	OrderDetails details;
+	OrderRecord record;
 	
-	details.id = stoi(order.getOrderId());
-	details.status = (int)order.getStatus();
-	details.capacity = order.getItemCount();
+	record.id = stoi(order.getOrderId());
+	record.status = (int)order.getStatus();
+	record.capacity = order.getItemCount();
 	
-	orders_bin_file.write((char*)&details, sizeof(OrderDetails));
+	orders_bin_file.write((char*)&record, sizeof(OrderRecord));
 }
 
 int FileData::getBINSize() 
 {
+	if(!orders_bin_file.is_open())
+		return 0;
     return orders_bin_file.tellp();
 }
 
-OrderDetails* FileData::loadOrder(int pos) {
+OrderRecord* FileData::loadOrder(int pos) {
 
 	// calculate file size
 	orders_bin_file.seekg(0, fstream::end);
@@ -78,7 +92,7 @@ OrderDetails* FileData::loadOrder(int pos) {
     
 	// move to position
 	orders_bin_file.seekg(
-		pos * (sizeof(OrderDetails) /* + 35 */),
+		pos * (sizeof(OrderRecord) /* + 35 */),
 		fstream::beg
 	);
 	
@@ -89,8 +103,8 @@ OrderDetails* FileData::loadOrder(int pos) {
 	}
 	
 	// hopefully we can read now...
-	OrderDetails* details = new OrderDetails;
-	orders_bin_file.read((char*)details, sizeof(OrderDetails));
+	OrderRecord* record = new OrderRecord;
+	orders_bin_file.read((char*)record, sizeof(OrderRecord));
 	
 	/*
 	// 'ID: '
@@ -109,5 +123,5 @@ OrderDetails* FileData::loadOrder(int pos) {
 	// orders_bin_file.seekg(1, fstream::cur);
 	*/
 	
-	return details;
+	return record;
 }
