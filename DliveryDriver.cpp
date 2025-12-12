@@ -8,19 +8,13 @@ using namespace std;
 
 
 DliveryDriver::DliveryDriver() : User()
-{
-    vehicalType_ = "";
-    completeDliveries_ = 0;
-    totalEarnings_ = 0.0;
-
-    userType_ = UserType::Driver;
-}
+{}
 
 DliveryDriver::DliveryDriver(
-	std::string id,
-	std::string n,
-	std::string p,
-	std::string vehicalType,
+	string id,
+	string n,
+	string p,
+	string vehicalType,
 	int completeDliveries,
 	double totalEarnings
 ) : User(id, n, p)
@@ -43,12 +37,13 @@ DliveryDriver::DliveryDriver(const DliveryDriver& dd) : User(dd)
 
 void DliveryDriver::displayInfo() 
 {
-    // User::displayInfo();
-
+    // User
 	cout << "UserID: " << userid_ << endl;
+    cout << "Type: " << userTypeName(userType_) << endl;
 	cout << "Name: " << name_ << endl;
 	cout << "Phone Number: " << phonenumber_ << endl;
 
+    // DliveryDriver
     cout << "Vehcial Type: " << vehicalType_ << endl;
     cout << "CompleteDliveries: " << completeDliveries_ << endl;
     cout << "Total Earnings: " << totalEarnings_ << endl;
@@ -62,7 +57,6 @@ double DliveryDriver::calculateEarnings()
 void DliveryDriver::completeDlivery(double orderValue) 
 {
     const double TAX = 0.75; // 75% tax
-
     totalEarnings_ += orderValue * TAX;
 }
 
@@ -98,6 +92,7 @@ double DliveryDriver::getTotalEarnings()
 
 ostream& operator<<(ostream& os, const DliveryDriver& dd) {
 	
+    // TBD ... add some lines
 	os << "Complete Deliveries: " << dd.completeDliveries_;
 	os << ", Total Earning: " << dd.totalEarnings_;
 	os << endl;

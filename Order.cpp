@@ -144,8 +144,6 @@ double Order::calculateTotal() const
 // display complete orders details
 void Order::displayOrder()
 {
-    cout << "ID: " << orderId_ << endl;
-
     // Custormer* customer_;
     // DilveryDriver* driver_;
     cout << (*this);
@@ -155,7 +153,7 @@ void Order::displayOrder()
 
     // order status
     cout << "Order Status: " << orderStatusName(status_) << endl;
-    cout << "Total Orders: " << Order::totalOrders_ << endl;
+    // cout << "Total Orders: " << Order::totalOrders_ << endl;
 }
 
 int Order::getTotalOrders()
@@ -222,7 +220,7 @@ ostream& operator<<(ostream& os, const Order& order)
     os << "ID: " << order.orderId_ << "\n";
     os << "Status: " << (int)order.status_ << "\n";
     os << "Items: " << order.itemCount_ << "\n";
-    os << "Capacity: " << order.capacity_ << "\n";
+    // os << "Capacity: " << order.capacity_ << "\n";
     
     /*os << "ItemCount: " << order.itemCount_ << endl;
     os << "Items: \n" << endl; 

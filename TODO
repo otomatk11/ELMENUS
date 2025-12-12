@@ -1,6 +1,4 @@
 
 
-Some options are not implemented.
-Use ID's as strings rather than integers.
-Use abstraction, there are many duplicated code.
-Optimize classes and codes.
+'DliveryDriver::operator<<' needs changes
+Optimize code

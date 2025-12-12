@@ -13,6 +13,7 @@
 using namespace std;
 
 enum MenuItem {
+    
 	// User Management
 	REG_CUS,        // register a new customer
 	REG_DRI,        // register a new driver
@@ -56,12 +57,10 @@ User*  users[50];  int user_i = 0;
 Order* orders[50]; int order_i = 0;
 
 
-bool   displayUsers(UserType filter);
 void   breakLine(const string& title);
 void   printHeader(int rows, const string& title, bool bottom_line);
 void   printMenu();
 void   prompt(const string& str, DataType dt, void* out);
-int    prompt_constraints(const string& str, int size, const string* list);
 Order* findOrder(string str);
 User*  findUser(string str);
 
@@ -80,7 +79,7 @@ int main() {
 
         int option;
 
-        prompt("\n>> ", DataType::INT, &option);
+        prompt(">> ", DataType::INT, &option);
 
         switch(option) {
 			case MenuItem::REG_CUS: // register a new customer
@@ -132,61 +131,55 @@ int main() {
                     completeDeliveries,
                     totalEarning
 				);
-
-                // cout << id << " has been added\n";
 			} break;
 			
 			case MenuItem::NEW_ORDER: // create a new order
 			{
-				// choose customer
-				if(!displayUsers(UserType::Customer)) {
+                if(customers_counter == 0) {
                     cout << " . No Customers\n";
-                    continue;
+                    break;
+                }
+
+                cout << "select customer by id\n";
+                for(int i = 0; i < user_i; i++) {
+                    cout << setw(3) << i << ". "
+                         << "id: " << users[i]->getUserID()
+                         << ", name: " << users[i]->getName()
+                         << ", type: " << userTypeName(users[i]->getType())
+                         << endl;
                 }
 				
 				string customerID;
-				int id;
-				
                 prompt("CustomerID: ", DataType::STR, &customerID);
 
-				// check user vaild, and if it is customer
 				User* user = findUser(customerID);
-				if(!user) {
-					// cout << "User does not exist\n";
-					break;
-				}
-				
-				if(user->getType() != UserType::Customer) {
-					cout << "please select a customer\n";
-					break;
-				}
-				
+				if(!user) break;
+
+                // check user vaild, and if it is customer
+                if(user->getType() != UserType::Customer) {
+                    cout << "User is not a customer!\n";
+                    break;
+                }
+
+                int id;
 				prompt("New OrderID: ", DataType::INT, &id);
 				
-				Customer* cus = static_cast<Customer*>(user);
-				orders[order_i++] = new Order(id, cus);
-				
-				cout << "New order has been created\n";
+                // create the order
+				orders[order_i++] = new Order(id, (Customer*)user);                
 			} break;
 			
 			case MenuItem::ADD:       // adds items to order
 			{
                 int numAddItems;
-                // int addOrderID;
                 string addOrder_ID;
-                
+
                 prompt("OrderID: ", DataType::STR, &addOrder_ID);
 				
 				// check order
 				Order* order = findOrder(addOrder_ID);
-				if(!order) {
-					// cout << "invalid order\n";
-					break;
-				}
+				if(!order) break;
 				
                 prompt("Number of items: ", DataType::INT, &numAddItems); 
-                
-                // addOrderID = stoi(addOrder_ID);
 
                 for(int i = 0; i< numAddItems; i++)
                 {
@@ -214,32 +207,40 @@ int main() {
             } break;
 			
 			case MenuItem::ASSIGN:    // assign driver to order
-			{
-                string driver_ID, order_ID;
-				
-				if(!displayUsers(UserType::Driver)) {
-					cout << " . No drivers\n";
+			{	
+				if(drivers_counter == 0) {
+                    cout << " . No drivers\n";
+                    break;
+                }
+
+                cout << "select driver by id\n";
+                for(int i = 0; i < user_i; i++) {
+                    cout << setw(3) << i << ". "
+                         << "id: " << users[i]->getUserID()
+                         << ", name: " << users[i]->getName()
+                         << ", type: " << userTypeName(users[i]->getType())
+                         << endl;
+                }
+
+                string driver_ID;
+                prompt("DriverID: ", DataType::STR, &driver_ID);
+
+                User* user = findUser(driver_ID);
+				if(!user) break;
+
+                // check user type
+				if(user->getType() != UserType::Driver) {
+					cout << "user is not a driver!\n";
 					break;
 				}
-				
-				prompt("DriverID: ", DataType::STR, &driver_ID);
+
+                string order_ID;
 				prompt("OrderID: ", DataType::STR, &order_ID);
 				
                 Order* order = findOrder(order_ID);
-                User* user = findUser(driver_ID);
-				if(!order || !user) {
-					// cout << "error, order or driver does not exist\n";
-					break;
-				}
-				
-				// check user type
-				if(user->getType() != UserType::Driver) {
-					cout << "invalid user, select a driver instead\n";
-					break;
-				}
-                
-				DliveryDriver* dd = static_cast<DliveryDriver*>(user);
-				order->assignDriver(dd);
+				if(!order) break;
+
+				order->assignDriver((DliveryDriver*)user);
             } break;
 			
 			case MenuItem::UPDATE:    // update order status
@@ -249,108 +250,108 @@ int main() {
                 prompt("OrderID: ", DataType::STR, &orderID);
 				
 				Order* order = findOrder(orderID);
-				if(!order) {
-					// cout << "invalid order\n";
-					break;
-				}
+				if(!order) break;
 
-                // to update order status, we create two lists
-                //  1. status list, for all avilable status.
-                //  2. list name, for status strings name
-                // we let the user choose the status based on its index in list
-                // and we map that index into 'status'.
+                // avilable status
+                const int STATUS_SIZE = 5;
+				const OrderStatus STATUS[STATUS_SIZE] = {
+				    OrderStatus::PENDING,
+				    OrderStatus::PREPARING,
+				    OrderStatus::OUT_OF_DELIVERY,
+				    OrderStatus::DELIVERED,
+				    OrderStatus::CANCELLED
+                };
 
                 // ask for new status
-				OrderStatus status[5];
-				status[0] = OrderStatus::PENDING;
-				status[1] = OrderStatus::PREPARING;
-				status[2] = OrderStatus::OUT_OF_DELIVERY;
-				status[3] = OrderStatus::DELIVERED;
-				status[4] = OrderStatus::CANCELLED;
 
-                string list[5];
-                list[0] = orderStatusName(status[0]);
-                list[1] = orderStatusName(status[1]);
-                list[2] = orderStatusName(status[2]);
-                list[3] = orderStatusName(status[3]);
-                list[4] = orderStatusName(status[4]);
+                cout << "pick status by index: " << endl;
+                for(int i = 0; i < STATUS_SIZE; i++) {
+                    cout << setw(3) << i << ". "
+                         << orderStatusName(STATUS[i])
+                         << endl;
+                }
+                
+                int pickIndex;
+                prompt("index: ", DataType::INT, &pickIndex);
 
-                int pickIndex = 
-                    prompt_constraints("Choose a status: ", 5, list);
-
-                order->updateStatus(status[pickIndex]);
+                // checking
+                if(pickIndex < 0 || pickIndex >= STATUS_SIZE) {
+                    cout << "out or range! aborting\n";
+                    break;
+                }
+                        
+                order->updateStatus(STATUS[pickIndex]);
             } break;
 			
 			case MenuItem::DIS_ORD:   // display order status
 			{
-                string idOfOrder;
-                Order* dispOrder;
-
-                prompt("OrderID: ", DataType::STR, &idOfOrder);
-                dispOrder= findOrder(idOfOrder);
-
-                if(dispOrder == NULL)
-                {
-                    // cout<< "No order with entered ID"<< endl;
+                if(order_i == 0) {
+                    cout << " . no orders yet\n";
                     break;
                 }
-                // dispOrder->displayOrder();
+
+                string idOfOrder;
+                prompt("OrderID: ", DataType::STR, &idOfOrder);
+
+                Order* dispOrder = findOrder(idOfOrder);
+                if(!dispOrder) break;
 				
-				string statusName = orderStatusName(dispOrder->getStatus());
-				cout << "Order status: " << statusName << endl;
-				
+				cout << "Order " << idOfOrder << "\'s status: " 
+                     << orderStatusName(dispOrder->getStatus())
+                     << endl;
             } break;
 			
 			case MenuItem::DIS_CUS: // display custorm information
 			{
-                string cusID;
-                User* dispCus;
-
-                prompt("CustomerID: ", DataType::STR, &cusID);
-                dispCus= findUser(cusID);
-
-                if(dispCus == NULL)
-                {
-                    // cout<< "No customer with the entered ID "<< endl;
+                if(customers_counter == 0) {
+                    cout << "no customers yet\n";
                     break;
                 }
+
+                string cusID;
+
+                prompt("CustomerID: ", DataType::STR, &cusID);
+
+                User* dispCus = findUser(cusID);
+                if(!dispCus) break;
 
                 dispCus->displayInfo();
             } break;
 			
 			case MenuItem::DIS_DRI: // display dirver information
 			{
-                string drivID;
-                User* dispDriver;
-
-                prompt("DriverID: ", DataType::STR, &drivID);
-                dispDriver= findUser(drivID);
-                
-                if(dispDriver == NULL)
-                {
-                    // cout <<"No driver with the entered ID "<< endl;
+                if(drivers_counter == 0) {
+                    cout << "no drivers yet\n";
                     break;
                 }
+
+                string drivID;
+
+                prompt("DriverID: ", DataType::STR, &drivID);
+
+                User* dispDriver = findUser(drivID);
+                if(!dispDriver) break;
 
                 dispDriver->displayInfo();
             } break;
 			
 			case MenuItem::CMP:     // compare two orders by total
 			{
-                Order* order1;
-                Order* order2;
+                if(order_i < 2) {
+                    cout << "no orders to compare\n";
+                    break;
+                }
+
                 string orderID_1, orderID_2;
 
                 prompt("Order 1\'s ID: ", DataType::STR, &orderID_1);
                 prompt("Order 2\'s ID: ", DataType::STR, &orderID_2);
 
-                order1 = findOrder(orderID_1);
-                order2 = findOrder(orderID_2);
+                Order* order1 = findOrder(orderID_1);
+                if(!order1) break;
 
-                if(!order1 || !order2) {
-                    // cout << " . No Orders!\n";
-                    break;
-                }
+                Order* order2 = findOrder(orderID_2);
+                if(!order2) break;
                 
                 if(*order1 > *order2)
                     cout << "The first order cost more than the second order" << endl;
@@ -366,12 +367,24 @@ int main() {
                 cout << " . System Statistics:\n";
 
                 // Users
-                cout << "Registered Users: " << User::getTotalUsers() << ": ";
-                cout << customers_counter << " Customers, ";
-                cout << drivers_counter << " Drivers.\n";
+                cout << "Registered Users: " << User::getTotalUsers() << endl;
+                // cout << customers_counter << " Customers, ";
+                // cout << drivers_counter << " Drivers.\n";
+
+                for(int i = 0; i < user_i; i++) {
+                    cout << "-----User" << i << endl;
+                    users[i]->displayInfo();
+                }
+                cout << "-----" << endl;
 
                 // Orders
-                cout << "Number of Orders: " << Order::getTotalOrders() << "\n";
+                cout << "Number of Orders: " << Order::getTotalOrders() << endl;
+                for(int i = 0; i < order_i; i++) {
+                    cout << "-----Order" << i << endl;
+                    orders[i]->displayOrder();
+                }
+                cout << "-----" << endl;
+
             } break;
 			
 			case MenuItem::SAVE_ORDERS:  // save completed orders to a file
@@ -399,10 +412,12 @@ int main() {
 
                 int counter = 0;
                 for(int i = 0; i < user_i; i++) {
-                    if(users[i]->getType() == UserType::Driver) {
-                        fd->saveDriver((DliveryDriver&)( *(users[i])) );
-						counter++;
-					}
+
+                    if(users[i]->getType() != UserType::Driver)
+                        continue;
+
+                    fd->saveDriver((DliveryDriver&)( *(users[i])) );
+					counter++;
                 }
 
                 cout << "written " << counter << " drivers\n";
@@ -447,11 +462,8 @@ int main() {
 			
 			case MenuItem::BIN_STAT:        // binary file statistics
 			{
-                // in this case, just print how many orders are writter to the 
-                // binary file.
-
-                const int bytes = fd->getBINSize();
-                cout << bytes << " Bytes are writter\n";
+                const int BYTES = fd->getBINSize();
+                cout << BYTES << " Bytes are writter\n";
             } break;
 			
             case MenuItem::MENU: // print menu
@@ -466,14 +478,14 @@ int main() {
                 cout << "Unknow option\n";
         }
     }
-	
-	delete fd;
 
 	for(int i = 0; i < user_i; i++)
 		delete users[i];
 	
 	for(int i = 0; i < order_i; i++)
 		delete orders[i];
+
+    delete fd;
 
     return 0;
 }
@@ -506,21 +518,25 @@ bool displayUsers(UserType filter) {
 
 void breakLine(const string& title) {
 
-    cout << "+";
+    const char EDGE_CH = '+';
+    const char LINE_CH = '-';
+    const int HALF_WAY = (MENU_WIDTH-title.length()) / 2;
+
+    cout << EDGE_CH;
 
     // check if title is odd numbered, just spit out an empty space
     // this is done to fix some issues with headers
     if(title.length() % 2 == 1)
         cout << " ";
 
-    const int HALF_WAY = (MENU_WIDTH-title.length()) / 2;
-    for(int c = 0; c < HALF_WAY - 1; c++)
-        cout << "-";
-    cout << title;
-    for(int c = 0; c < HALF_WAY - 1; c++)
-        cout << "-";
+    const string LINE(HALF_WAY-1, LINE_CH);
 
-    cout << "+\n";
+    cout << LINE;
+    cout << title;
+    cout << LINE;
+
+    cout << EDGE_CH;
+    cout << endl;
 }
 
 void printHeader(int rows, const string& title, bool bottom_line) {
@@ -528,9 +544,16 @@ void printHeader(int rows, const string& title, bool bottom_line) {
     // print top line
     breakLine("");
 
+    const char EMPTY_CH = ' ';
+    const char BAR_CH = '|';
+
+    const int HALF_WAY = (MENU_WIDTH-title.length()) / 2;
+    const string EMPTY1(HALF_WAY - 1, ' ');
+    const string EMPTY2(MENU_WIDTH - 2, ' ');
+
     for(int i = 0; i < rows; i++) {
 
-        cout << "|";
+        cout << BAR_CH;
         if(i == (rows-1) / 2) {
 
             // check if title is odd numbered, just spit out an empty space
@@ -539,21 +562,16 @@ void printHeader(int rows, const string& title, bool bottom_line) {
                 cout << " ";
 
             // print title
-            const int HALF_WAY = (MENU_WIDTH-title.length()) / 2;
-            for(int c = 0; c < HALF_WAY - 1; c++)
-                cout << " ";
-			
+            cout << EMPTY1;
             cout << title;
-            for(int c = 0; c < HALF_WAY - 1; c++)
-                cout << " ";
-			
+            cout << EMPTY1;
         } else {
 
             // print empty
-            for(int c = 0; c < MENU_WIDTH-2; c++)
-                cout << " ";
+            cout << EMPTY2;
         }
-        cout << "|\n";
+        cout << BAR_CH;
+        cout << endl;
     }
 
     // bottom line
@@ -603,10 +621,13 @@ void prompt(const string& str, DataType dt, void* out) {
 
 		cout << str;
 
-		// Source - https://stackoverflow.com/a
-		// Posted by Evan Teran, modified by community. See post 'Timeline' for change history
-		// Retrieved 2025-12-07, License - CC BY-SA 3.0
-		// std::cin.ignore((unsigned int)~0);
+        {
+            // Source - https://stackoverflow.com/a
+            // Posted by Evan Teran, modified by community. See post 'Timeline' for change history
+            // Retrieved 2025-12-07, License - CC BY-SA 3.0
+
+            // std::cin.ignore((unsigned int)~0);
+        }
 
         getline(cin, input);
 
@@ -660,6 +681,7 @@ void prompt(const string& str, DataType dt, void* out) {
 			break;
 		}
 
+        // sensitive check
         if(dt == inputType) {
 
             switch(dt) {
@@ -677,35 +699,12 @@ void prompt(const string& str, DataType dt, void* out) {
             break;
         }
 
+        // error message
         cout << "prompt: expected \"" << dataTypeName(dt )<< "\"\n";
     }
 }
 
-int prompt_constraints(const string& str, int size, const string* list) {
-
-    // print list
-    for(int i = 0; i < size; i++) {
-        cout << setw(3) << i << ". " 
-             << list[i] << endl;
-    }
-
-    int index;
-	
-	while(true) {
-		prompt(str, DataType::INT, &index);
-		
-        // is in range?
-		if(index < size && index >= 0)
-			break;
-		
-		cout << "out of range!\n";
-	}
-
-    return index;
-}
-
-Order* findOrder(string str)
-{
+Order* findOrder(string str) {
     for(int j = 0; j < order_i; j++)
     {
         if(str.compare(orders[j]->getOrderId()) == 0)
@@ -717,8 +716,7 @@ Order* findOrder(string str)
     return NULL;
 }
 
-User* findUser(string str)
-{
+User* findUser(string str) {
     for(int j = 0; j < user_i; j++)
     {
         if(str.compare(users[j]->getUserID()) == 0)

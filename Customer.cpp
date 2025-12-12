@@ -10,15 +10,15 @@ Customer::Customer() : User()
 }
 
 Customer::Customer(
-		std::string id,
-		std::string n,
-		std::string p,
-		std::string deliveryA,
-		int loyaltyP
+    string id,
+    string n,
+    string p,
+    string deliveryA,
+    int loyaltyP
 ) : User(id, n, p)
 {
-    setDeliveryAddress(deliveryA);
-    setLoyaltyPoints(loyaltyP);
+    deliveryAddress_ = deliveryA;
+    loyaltyPoints_ = loyaltyP;
 
     userType_ = UserType::Customer;
 }
@@ -26,6 +26,7 @@ Customer::Customer(
 void Customer::displayInfo()
 {
     cout << "UserID: " << userid_ << endl;
+    cout << "Type: " << userTypeName(userType_) << endl;
 	cout << "Name: " << name_ << endl;
 	cout << "Phone Number: " << phonenumber_ << endl;
 	
