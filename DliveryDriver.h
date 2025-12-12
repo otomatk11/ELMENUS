@@ -20,7 +20,6 @@ private:
     double totalEarnings_;
 public:
 
-    // ctors
     DliveryDriver();
     DliveryDriver(const DliveryDriver& dd);
     DliveryDriver(
@@ -37,18 +36,13 @@ public:
 
     void completeDlivery(double orderValue);
 
-    // postfix
     DliveryDriver operator++();
-
-    // prefix
     DliveryDriver& operator++(int);
 
-    // getters
     std::string getVehicalType();
     int getCompleteDliveries();
     double getTotalEarnings();
 	
-	// Extra
 	friend std::ostream& operator<< (std::ostream& os, const DliveryDriver& dd);
 };
 

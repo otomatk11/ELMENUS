@@ -266,7 +266,6 @@ int main() {
                 };
 
                 // ask for new status
-
                 cout << "pick status by index: " << endl;
                 for(int i = 0; i < STATUS_SIZE; i++) {
                     cout << setw(3) << i << ". "
@@ -371,9 +370,6 @@ int main() {
 			
 			case MenuItem::DIS_SYS: // display system statistics
 			{
-                // in this case, we just print some info about the system.
-                // like number of customers, delivery drivers. And Orders.
-
                 cout << " . System Statistics:\n";
 
                 // Users
@@ -465,8 +461,6 @@ int main() {
 			
 			case MenuItem::LOAD:            // load order by position
 			{
-                // given a file with orders, load an order 
-                // from the file based on its position in file.
 
                 int position;
 
@@ -514,32 +508,6 @@ int main() {
     delete fd;
 
     return 0;
-}
-
-bool displayUsers(UserType filter) {
-
-	if(user_i == 0)
-        return false;
-
-    int counter = 0;
-	
-	string typeName = userTypeName(filter);
-	
-	cout << "ID.  Name: " << " Type: " << typeName << "\n";
-
-    for(int i = 0; i < user_i; i++) {
-        if(users[i]->getType() == filter) {
-
-            cout << setw(4) << users[i]->getUserID() << ". "
-                 << users[i]->getName() << endl;
-
-            counter++;
-        }
-    }
-
-	cout << endl;
-
-    return counter > 0;
 }
 
 void breakLine(const string& title) {
@@ -646,14 +614,6 @@ void prompt(const string& str, DataType dt, void* out) {
     while(true) {
 
 		cout << str;
-
-        {
-            // Source - https://stackoverflow.com/a
-            // Posted by Evan Teran, modified by community. See post 'Timeline' for change history
-            // Retrieved 2025-12-07, License - CC BY-SA 3.0
-
-            // std::cin.ignore((unsigned int)~0);
-        }
 
         getline(cin, input);
 

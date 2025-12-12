@@ -54,10 +54,6 @@ string User::getPhoneNumber()
     return phonenumber_;
 }
 
-/*bool User::checkType(UserType type) {
-    return type == userType_;
-}*/
-
 UserType User::getType() {
     return userType_;
 }

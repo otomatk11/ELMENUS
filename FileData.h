@@ -18,9 +18,9 @@
 #include "Order.h"
 
 struct OrderRecord {
-    int id; 	    // "ID: "
-    int status;     // ", Status: "
-    int capacity;   // ", Capacity: "
+    int id;
+    int status;
+    int capacity;
 };
 
 class FileData {

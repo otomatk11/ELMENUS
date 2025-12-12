@@ -18,8 +18,6 @@ using namespace std;
 int Order::totalOrders_ = 0;
 
 
-
-
 Order::Order()
 {
     ++totalOrders_;
@@ -41,7 +39,6 @@ Order::Order(int orderId, Customer* cus)
 {
     ++totalOrders_;
 
-    // convert to string
     orderId_ = to_string(orderId);
 
     customer_ = cus;
@@ -52,7 +49,6 @@ Order::Order(int orderId, Customer* cus)
     itemCount_ = DEF_ITEMS_COUNT;
     items_ = new FoodItem[DEF_ITEMS_COUNT];
 
-    // status
     status_ = OrderStatus::PENDING;
 }
 
@@ -62,11 +58,9 @@ Order::Order(const Order& order)
 
     orderId_ = order.orderId_;
 
-    // associations
     customer_ = order.customer_;
     driver_ = order.driver_;
 
-    // food info
     itemCount_ = order.itemCount_;
     items_ = new FoodItem[itemCount_];
     
@@ -75,7 +69,6 @@ Order::Order(const Order& order)
 
     capacity_ = order.capacity_;
 
-    // order status
     status_ = order.status_;
 }
 
@@ -83,14 +76,7 @@ Order::~Order()
 {
     --totalOrders_;
 
-    // if(customer_)
-    //     delete customer_;
-
-    // if(driver_)
-    //     delete driver_;
-
     if(items_) {
-        // for(int i = 0; i < itemCount_; i++)
         delete[] items_;
         items_ = NULL;
     }
@@ -203,16 +189,11 @@ Order& Order::operator+ (const Order& order)
 // print order details, "What Details?"
 ostream& operator<<(ostream& os, const Order& order)
 {
-
-    // following the same order as in OrderDetails
     os << "ID: " << stoi(order.orderId_);		//  4 + sizeof(int)
     os << ", Status: " << (int)order.status_;	// 10 + sizeof(int)
-    // os << ", Items: " << order.itemCount_;		//  9 + sizeof(int)
     os << ", Capacity: " << order.capacity_;   	// 12 + sizeof(int)
 	os << "\n";
     
-	// total size: sizeof(OrderDetails) + 35
-	
     return os;
 }
 

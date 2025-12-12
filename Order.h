@@ -56,26 +56,20 @@ public:
 
     static int getTotalOrders();
 
-    // getters
 	OrderStatus getStatus();
     std::string getOrderId();
     Customer* getCustomer();
     DliveryDriver* getDriver();
     int getItemCount();
 	
-    // add food item
     void operator+=(const FoodItem& item);
 
-    // combine two orders into one order, adds order to *this
     Order& operator+ (const Order& order);
 
-    // print order details
     friend std::ostream& operator<<(std::ostream& os, const Order& order);
 
-    // comparison, based on total price
     friend bool operator>(const Order& o1, const Order& o2);
 
-    // retrive foot item by index
     FoodItem& operator[](int index);
 private:
 

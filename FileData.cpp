@@ -20,14 +20,6 @@ const string DRIVERS_FILE = "drivers.txt";
 // driver statistics binary file 
 const string ORDERS_BIN_FILE = "orders.dat";
 
-/*
-void printOrderDetails(OrderDetails* details) {
-    cout << "OrderID: " << details->id << endl;
-    cout << "Status: " << orderStatusName((OrderStatus) details->status ) << endl;
-    cout << "Capacity: " << details->capacity << endl;
-    cout << endl;
-}
-*/
 
 FileData::FileData()
 {
@@ -113,23 +105,6 @@ OrderRecord* FileData::loadOrder(int pos) {
 
 	// calculate time elapsed
 	cout << "Took: " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << " micro seconds" << endl;
-
-	/*
-	// 'ID: '
-	orders_bin_file.seekg(4, fstream::cur);
-	orders_bin_file.read((char*)&details->id, sizeof(int));
-	
-	// '\nStatus: '
-	orders_bin_file.seekg(10, fstream::cur);
-	orders_bin_file.read((char*)&details->status, sizeof(int));
-	
-	// '\nCapacity: '
-	orders_bin_file.seekg(12, fstream::cur);
-	orders_bin_file.read((char*)&details->capacity, sizeof(int));
-	
-	// '\n'
-	// orders_bin_file.seekg(1, fstream::cur);
-	*/
 	
 	return record;
 }
