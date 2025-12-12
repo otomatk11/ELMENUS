@@ -356,17 +356,17 @@ int main() {
                 Order* order2 = findOrder(orderID_2);
                 if(!order2) break;
                 
-                if(*order1 > *order2)
+                if(*order1 > *order2) {
                     cout << "The first order cost more than the second order" << endl;
-                else
+                } else {
                     {
-                        if(*order2 > *order1)
-                        {
+                        if(*order2 > *order1) {
                             cout<< "The second order cost more than the first order "<< endl;
-                        }
-                        else
+                        } else {
                             cout << "Both order cost the same amount of money" << endl;
+                        }
                     }
+                }
             } break;
 			
 			case MenuItem::DIS_SYS: // display system statistics
@@ -467,8 +467,6 @@ int main() {
 			{
                 // given a file with orders, load an order 
                 // from the file based on its position in file.
-
-				// warning: this case does not work properply. May fail or break entirely
 
                 int position;
 

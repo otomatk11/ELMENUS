@@ -6,6 +6,7 @@
 
 
 #include <iostream>
+#include <chrono>
 #include "FileData.h"
 
 using namespace std;
@@ -45,7 +46,7 @@ FileData::~FileData()
     if(orders_bin_file.is_open()) orders_bin_file.close();
 }
 
-void FileData::saveOrder(const Order& order)
+void FileData::saveOrder(Order& order)
 {
 	if(orders_file.is_open())
 		orders_file << order;
@@ -53,7 +54,7 @@ void FileData::saveOrder(const Order& order)
 		cout << ORDERS_FILE << " is not opened!\n";
 }
 
-void FileData::saveDriver(const DliveryDriver& driver)
+void FileData::saveDriver(DliveryDriver& driver)
 {
     if(drivers_file.is_open())
 		drivers_file << driver;
@@ -86,6 +87,8 @@ int FileData::getBINSize()
 
 OrderRecord* FileData::loadOrder(int pos) {
 
+	chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
 	// calculate file size
 	orders_bin_file.seekg(0, fstream::end);
 	const int SIZE = orders_bin_file.tellp();
@@ -106,6 +109,11 @@ OrderRecord* FileData::loadOrder(int pos) {
 	OrderRecord* record = new OrderRecord;
 	orders_bin_file.read((char*)record, sizeof(OrderRecord));
 	
+	chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+
+	// calculate time elapsed
+	cout << "Took: " << chrono::duration_cast<chrono::microseconds>(end - begin).count() << " micro seconds" << endl;
+
 	/*
 	// 'ID: '
 	orders_bin_file.seekg(4, fstream::cur);

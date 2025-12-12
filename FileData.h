@@ -35,8 +35,8 @@ public:
     FileData();
     ~FileData();
 
-    void saveOrder(const Order& order);
-    void saveDriver(const DliveryDriver& driver);
+    void saveOrder(Order& order);
+    void saveDriver(DliveryDriver& driver);
     void saveOrderBIN(Order& driver);
 
     int getBINSize();
