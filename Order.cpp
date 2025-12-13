@@ -1,4 +1,8 @@
-
+//
+//
+//
+// Haytham Ashraf  - 20246070 - G8
+// Mahmoud Shalaby - 20246102 - G8
 
 #include <iostream>
 // #include <iomanip>
@@ -17,7 +21,6 @@ int Order::totalOrders_ = 0;
 void printOrderDetails(OrderDetails* details) {
     cout << "OrderID: " << details->id << endl;
     cout << "Status: " << orderStatusName((OrderStatus) details->status ) << endl;
-    cout << "FoodItems: " << details->items << endl;
     cout << "Capacity: " << details->capacity << endl;
     cout << endl;
 }
@@ -105,15 +108,7 @@ OrderStatus Order::getStatus()
 
 void Order::addItem(const FoodItem& item)
 {
-    if(capacity_ == itemCount_)
-        resize_(DEF_ITEMS_COUNT);
-
-    // add item to items_ in a stack order
-    items_[capacity_].setItemName(item.getItemName());
-    items_[capacity_].setPrice(item.getPrice());
-    items_[capacity_].setQuantity(item.getQuantity());
-
-    ++capacity_;
+    *this += item;
 }
 
 void Order::assignDriver(DliveryDriver* driver)
@@ -126,6 +121,11 @@ void Order::assignDriver(DliveryDriver* driver)
 void Order::updateStatus(OrderStatus status) 
 {
     status_ = status;
+	if(status == OrderStatus::DELIVERED) {
+		
+		double orderValues = calculateTotal();
+		driver_->completeDlivery(orderValues);
+	}
 }
 
 // return sum of all items
@@ -144,16 +144,9 @@ double Order::calculateTotal() const
 // display complete orders details
 void Order::displayOrder()
 {
-    // Custormer* customer_;
-    // DilveryDriver* driver_;
-    cout << (*this);
-
-    // how many items are inside item_
+    cout << "ID: " << orderId_ << endl;
     cout << "Capacity: " << capacity_ << endl;
-
-    // order status
     cout << "Order Status: " << orderStatusName(status_) << endl;
-    // cout << "Total Orders: " << Order::totalOrders_ << endl;
 }
 
 int Order::getTotalOrders()
@@ -166,19 +159,19 @@ string Order::getOrderId()
     return orderId_;
 }
 
-const Customer* Order::getCustomer()
+Customer* Order::getCustomer()
 {
     return customer_;
 }
 
-const DliveryDriver* Order::getDriver()
+DliveryDriver* Order::getDriver()
 {
     return driver_;
 }
 
 int Order::getItemCount()
 {
-    return itemCount_;
+    return capacity_;
 }
 
 // add food item
@@ -217,21 +210,14 @@ ostream& operator<<(ostream& os, const Order& order)
 {
 
     // following the same order as in OrderDetails
-    os << "ID: " << order.orderId_ << "\n";
-    os << "Status: " << (int)order.status_ << "\n";
-    os << "Items: " << order.itemCount_ << "\n";
-    // os << "Capacity: " << order.capacity_ << "\n";
+    os << "ID: " << stoi(order.orderId_);		//  4 + sizeof(int)
+    os << ", Status: " << (int)order.status_;	// 10 + sizeof(int)
+    // os << ", Items: " << order.itemCount_;		//  9 + sizeof(int)
+    os << ", Capacity: " << order.capacity_;   	// 12 + sizeof(int)
+	os << "\n";
     
-    /*os << "ItemCount: " << order.itemCount_ << endl;
-    os << "Items: \n" << endl; 
-    
-    for(int i = 0; i < order.itemCount_; i++) {
-        os << "\t" << "Item[" << i << "]: " << endl;
-        os << "\t\t" << "Name: " << order.items_[i].getItemName() << endl;
-        os << "\t\t" << "Price: " << order.items_[i].getPrice() << endl;
-        os << "\t\t" << "Quantity: " << order.items_[i].getQuantity() << endl;
-    }*/
-
+	// total size: sizeof(OrderDetails) + 35
+	
     return os;
 }
 

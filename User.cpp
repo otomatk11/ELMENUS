@@ -1,4 +1,8 @@
-
+//
+//
+//
+// Haytham Ashraf  - 20246070 - G8
+// Mahmoud Shalaby - 20246102 - G8
 
 #include <iostream>
 #include "User.h"

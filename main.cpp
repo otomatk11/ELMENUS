@@ -1,5 +1,8 @@
-
-
+//
+//
+//
+// Haytham Ashraf  - 20246070 - G8
+// Mahmoud Shalaby - 20246102 - G8
 
 #include <iostream>
 #include <fstream>
@@ -68,7 +71,7 @@ User*  findUser(string str);
 int main() {
 
 	bool shouldExit = false;
-
+	
 	FileData* fd = new FileData;
 	
     // print program's splash and menu
@@ -201,7 +204,7 @@ int main() {
                     item.setPrice(price);
                     item.setQuantity(quantity);
 					
-					order->addItem(item);
+					*order += item;
                 }
 				
             } break;
@@ -382,6 +385,19 @@ int main() {
                 for(int i = 0; i < order_i; i++) {
                     cout << "-----Order" << i << endl;
                     orders[i]->displayOrder();
+					
+					if(orders[i]->getCustomer())
+						cout << "Customer: " << orders[i]->getCustomer()->getName() << endl;
+					
+					if(orders[i]->getDriver())
+						cout << "Driver: " << orders[i]->getDriver()->getName() << endl;
+					
+					cout << "printing items: \n";
+					for(int k = 0; k < orders[i]->getItemCount(); k++) {
+						FoodItem& item = (*orders[i])[k];
+						cout << "\t";
+						item.displayItem();
+					}
                 }
                 cout << "-----" << endl;
 
@@ -444,6 +460,8 @@ int main() {
 			{
                 // given a file with orders, load an order 
                 // from the file based on its position in file.
+
+				// warning: this case does not work properply. May fail or break entirely
 
                 int position;
 
@@ -525,7 +543,7 @@ void breakLine(const string& title) {
     cout << EDGE_CH;
 
     // check if title is odd numbered, just spit out an empty space
-    // this is done to fix some issues with headers
+    // this is done to fix some spacing issues
     if(title.length() % 2 == 1)
         cout << " ";
 

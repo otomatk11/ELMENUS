@@ -1,3 +1,9 @@
+//
+//
+//
+// Haytham Ashraf  - 20246070 - G8
+// Mahmoud Shalaby - 20246102 - G8
+
 
 #include <iostream>
 #include "Status.h"
@@ -31,7 +37,7 @@ void Customer::displayInfo()
 	cout << "Phone Number: " << phonenumber_ << endl;
 	
     cout << "Delivery Address: " << deliveryAddress_ << endl;
-    cout << "Loyalty Points: " << loyaltyPoints_ << endl;
+    cout << "Loyalty Points: " << calculateEarnings() << endl;
 }
 
 double Customer::calculateEarnings()

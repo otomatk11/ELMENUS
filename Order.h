@@ -1,4 +1,8 @@
-
+//
+//
+//
+// Haytham Ashraf  - 20246070 - G8
+// Mahmoud Shalaby - 20246102 - G8
 
 #ifndef _ORDER_H_
 #define _ORDER_H_
@@ -9,12 +13,11 @@
 #include "Customer.h"
 #include "DliveryDriver.h"
 
-struct OrderDetails {
-    std::string id; // ID:
-    OrderStatus status; // Status:
-    // number of foodItems that were stored
-    int items; // Items:
-    int capacity; // Capacity:
+struct OrderDetails 
+{
+    int id; 			// "ID: "
+    int status; 		// ", Status: "
+    int capacity; 		// ", Capacity: "
 };
 
 void printOrderDetails(OrderDetails* details);
@@ -65,10 +68,10 @@ public:
     // getters
 	OrderStatus getStatus();
     std::string getOrderId();
-    const Customer* getCustomer();
-    const DliveryDriver* getDriver();
+    Customer* getCustomer();
+    DliveryDriver* getDriver();
     int getItemCount();
-
+	
     // add food item
     void operator+=(const FoodItem& item);
 

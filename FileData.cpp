@@ -1,4 +1,8 @@
-
+//
+//
+//
+// Haytham Ashraf  - 20246070 - G8
+// Mahmoud Shalaby - 20246102 - G8
 
 
 #include <iostream>
@@ -17,9 +21,9 @@ const string ORDERS_BIN_FILE = "orders.bin";
 
 FileData::FileData()
 {
-    orders_file.open(ORDERS_FILE, fstream::out | fstream::app);
-    drivers_file.open(DRIVERS_FILE, fstream::out | fstream::app);
-    orders_bin_file.open(ORDERS_BIN_FILE, fstream::out | fstream::app | fstream::in | fstream::binary);
+    orders_file.open(ORDERS_FILE, fstream::out);
+    drivers_file.open(DRIVERS_FILE, fstream::out);
+    orders_bin_file.open(ORDERS_BIN_FILE, fstream::out | fstream::in);
 }
 
 FileData::~FileData()
@@ -31,29 +35,34 @@ FileData::~FileData()
 
 void FileData::saveOrder(const Order& order)
 {
-	if(orders_file.is_open()) {
+	if(orders_file.is_open())
 		orders_file << order;
-		// orders_file.flush();
-	} else
+	else
 		cout << ORDERS_FILE << " is not opened!\n";
 }
 
 void FileData::saveDriver(const DliveryDriver& driver)
 {
-    if(drivers_file.is_open()) {
+    if(drivers_file.is_open())
 		drivers_file << driver;
-		// drivers_file.flush();
-	} else
+	else
 		cout << DRIVERS_FILE << " is not opened\n";
 }
 
-void FileData::saveOrderBIN(const Order& order)
+void FileData::saveOrderBIN(Order& order)
 {
-    if(orders_bin_file.is_open()) {
-		orders_bin_file << order;
-		// orders_bin_file.flush();
-	} else
+    if(!orders_bin_file.is_open()) {
 		cout << ORDERS_BIN_FILE << " file is not opened\n";
+		return;
+	}
+	
+	OrderDetails details;
+	
+	details.id = stoi(order.getOrderId());
+	details.status = (int)order.getStatus();
+	details.capacity = order.getItemCount();
+	
+	orders_bin_file.write((char*)&details, sizeof(OrderDetails));
 }
 
 int FileData::getBINSize() 
@@ -63,40 +72,42 @@ int FileData::getBINSize()
 
 OrderDetails* FileData::loadOrder(int pos) {
 
-    OrderDetails* details = NULL;
-
-    /* 
-    // check file size
-	orders_bin_file.seekg(0, ios_base::end);
+	// calculate file size
+	orders_bin_file.seekg(0, fstream::end);
 	const int SIZE = orders_bin_file.tellp();
-	orders_bin_file.seekg(pos * sizeof(OrderDetails), ios_base::beg);
-
-	if(SIZE) {
-		cout << " . Bad file\n";
-		return details;
+    
+	// move to position
+	orders_bin_file.seekg(
+		pos * (sizeof(OrderDetails) /* + 35 */),
+		fstream::beg
+	);
+	
+	// compare current reading position index with the file size.
+	const int CPOS = orders_bin_file.tellp();
+	if(SIZE == CPOS) {
+		return NULL;
 	}
+	
+	// hopefully we can read now...
+	OrderDetails* details = new OrderDetails;
+	orders_bin_file.read((char*)details, sizeof(OrderDetails));
+	
+	/*
+	// 'ID: '
+	orders_bin_file.seekg(4, fstream::cur);
+	orders_bin_file.read((char*)&details->id, sizeof(int));
+	
+	// '\nStatus: '
+	orders_bin_file.seekg(10, fstream::cur);
+	orders_bin_file.read((char*)&details->status, sizeof(int));
+	
+	// '\nCapacity: '
+	orders_bin_file.seekg(12, fstream::cur);
+	orders_bin_file.read((char*)&details->capacity, sizeof(int));
+	
+	// '\n'
+	// orders_bin_file.seekg(1, fstream::cur);
 	*/
-
-	orders_bin_file.seekg(pos * sizeof(OrderDetails), ios_base::beg);
-	int cursorPos = orders_bin_file.tellp();
 	
-	if(cursorPos != pos * sizeof(OrderDetails)) {
-		cout << "error, position is out of reach\n";
-		return NULL;
-	}
-	
-	details = new OrderDetails;
-
-    const int pos1 = orders_bin_file.tellp();
-    orders_bin_file.read((char*)details, sizeof(OrderDetails));
-    const int pos2 = orders_bin_file.tellp();
-
-    // check 
-    if( pos1 - pos2 <= 0 ) {
-        cout << "error, position too big, or no orders are in file\n";
-		delete details;
-		return NULL;
-    }
-
-    return details;
+	return details;
 }

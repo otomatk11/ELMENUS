@@ -1,4 +1,8 @@
-
+//
+//
+//
+// Haytham Ashraf  - 20246070 - G8
+// Mahmoud Shalaby - 20246102 - G8
 
 // Simple File for storing system data within files
 
@@ -30,7 +34,7 @@ public:
 
     void saveOrder(const Order& order);
     void saveDriver(const DliveryDriver& driver);
-    void saveOrderBIN(const Order& driver);
+    void saveOrderBIN(Order& driver);
 
     int getBINSize();
 

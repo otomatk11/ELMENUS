@@ -1,4 +1,8 @@
-
+//
+//
+//
+// Haytham Ashraf  - 20246070 - G8
+// Mahmoud Shalaby - 20246102 - G8
 
 #include <iostream>
 #include "Status.h"
@@ -46,7 +50,7 @@ void DliveryDriver::displayInfo()
     // DliveryDriver
     cout << "Vehcial Type: " << vehicalType_ << endl;
     cout << "CompleteDliveries: " << completeDliveries_ << endl;
-    cout << "Total Earnings: " << totalEarnings_ << endl;
+    cout << "Total Earnings: " << calculateEarnings() << endl;
 }
 
 double DliveryDriver::calculateEarnings() 
@@ -57,7 +61,9 @@ double DliveryDriver::calculateEarnings()
 void DliveryDriver::completeDlivery(double orderValue) 
 {
     const double TAX = 0.75; // 75% tax
-    totalEarnings_ += orderValue * TAX;
+	
+	// add 15% to total earnings 
+    totalEarnings_ += orderValue * ( 1 - TAX );
 }
 
 // postfix
@@ -93,9 +99,13 @@ double DliveryDriver::getTotalEarnings()
 ostream& operator<<(ostream& os, const DliveryDriver& dd) {
 	
     // TBD ... add some lines
-	os << "Complete Deliveries: " << dd.completeDliveries_;
-	os << ", Total Earning: " << dd.totalEarnings_;
-	os << endl;
+	os << "UserID: " << dd.userid_
+	   << ", Name: " << dd.name_
+	   << ", Phone Number: " << dd.phonenumber_
+	   << ", Complete Deliveries: " << dd.completeDliveries_
+	   << ", Total Earning: " << dd.totalEarnings_
+	   << ", Vehcial Type: " << dd.vehicalType_
+	   << endl;
 	
 	return os;
 }
